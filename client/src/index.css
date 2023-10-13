@@ -63,6 +63,20 @@ body {
   -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
+.text-gradient {
+  background-color: #fff;
+  background-image: radial-gradient(at 4% 36%, hsla(0,0%,100%,1) 0, transparent 53%), radial-gradient(at 100% 60%, hsla((281,40%,57%,1)) 0, transparent 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-glassmorphism {
+  background: rgba(198,178,206,0.44);
+  border-radius: 16px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+ 
+}
 
 .eth-card {
   background-color:hsla(263,87%,74%,0.99);
@@ -74,9 +88,3 @@ radial-gradient(at 26% 15%, hsla(266,82%,82%,1) 0px, transparent 50%),
 radial-gradient(at 25% 75%, hsla(222,64%,71%,1) 0px, transparent 50%);
 }
 
-.text-gradient {
-  background-color: #fff;
-  background-image: radial-gradient(at 4% 36%, hsla(0,0%,100%,1) 0, transparent 53%), radial-gradient(at 100% 60%, hsla((281,40%,57%,1)) 0, transparent 50%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
