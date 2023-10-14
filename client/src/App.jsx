@@ -3,17 +3,19 @@ import { useState } from 'react'
 //import viteLogo from '/vite.svg'
 //import './App.css'
 
-import { Navbar, Welcome, Footer, Services, Transactions } from "./components";
+
+
+import { Navbar, Welcome, Footer, Convert, Transfer, Support } from "./components";
 
 const App = () => (
   <div className="min-h-screen">
     <div className="gradient-bg-welcome">
       <Navbar />
       <Welcome />
+      <Footer />
     </div>
-    <Services />
-    <Transactions />
-    <Footer />
+
+    
   </div>
 );
 
