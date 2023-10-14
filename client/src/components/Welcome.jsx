@@ -30,17 +30,21 @@ const Welcome =()=>{
     return(
     <div className="flex w-full justify-center items-center">
       <div className="flex mf:flex-row flex-col justify-between md:p-20 py-12 px-4">
-        <div className="basis-1/2 justify-between pr-15 ">
-            <h1 className="text-3xl sm:text-5xl py-1 text-gradient">
+        <div className="basis-1/2 mt-6 justify-between pr-15 ">
+            <h1 className="text-3xl  sm:text-5xl py-1 text-gradient">
             Відправляй криптовалюту <br /> з будь-якої точки світу
             </h1>
-            <p className="font-serif text-left  mt-5 text-white  md:w-9/12 w-11/12 text-lg">
+            <p className="font-serif  mt-5 text-white  md:w-9/12 w-11/12 text-lg">
             Досліджуйте криптосвіт. Легко обмінюйте та пересилайте криптовалюти на Loony.
             </p>
-            <button type="button" onClick={connectWallet} className="flex flex-row justify-center items-center my-5 bg-[#8899f2] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]">
+            
+                <button type="button" onClick={connectWallet} className="flex justify-center items-center   my-5  bg-[#8899f2] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]">
                 <p className="text-white text-base font-semibold">Під'єднати гаманець</p> 
             </button>
+            
+            
 
+            
 
             {/* <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10 header-glassmorphism">
                 <div className={`rounded-tl-2xl ${commonStyles}`}> Надійність</div>
