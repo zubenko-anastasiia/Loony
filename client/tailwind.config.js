@@ -11,16 +11,14 @@
 // }
 const withMT = require("@material-tailwind/react/utils/withMT");
 module.exports = withMT({
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content:  ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
   },
   plugins: [],
 });
 module.exports = {
-  purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-  mode: "jit",
-  darkMode: false, // or 'media' or 'class'
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   theme: {
     fontFamily: {
       display: ["Open Sans", "sans-serif"],
@@ -47,8 +45,6 @@ module.exports = {
       },
     },
   },
-  variants: {
-    extend: {},
-  },
+  
   //plugins: [require("@tailwindcss/forms")],
 };
