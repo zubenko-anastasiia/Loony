@@ -28,7 +28,7 @@ const Welcome =()=>{
     }
 
     return(
-    <div className="flex w-full justify-center items-center">
+    <div className="flex w-full justify-center items-center ">
       <div className="flex mf:flex-row flex-col justify-between md:p-20 py-12 px-4">
         <div className="basis-1/2 mt-6 justify-between pr-15 ">
             <h1 className="text-3xl  sm:text-5xl py-1 text-gradient">

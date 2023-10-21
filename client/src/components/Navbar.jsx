@@ -1,6 +1,7 @@
 import React from "react";
 import  { HiMenuAlt4 }  from "react-icons/hi";
 import  { AiOutlineClose }  from "react-icons/ai";
+import { Link } from 'react-router-dom';
 
 import logo from "../images/logo.png";
 
@@ -17,9 +18,22 @@ const Navbar = () => {
         <img src={logo} alt="logo" className="w-32 cursor-pointer" />
       </div>
       <ul className= "text-white md:flex hidden list-none flex-row justify-between items-center flex-initial " >
-        {["Переказ", "Обмін", "GitHub", "Підтримка"].map((item, index) => (
+        {/* {["Переказ", "Обмін", "GitHub", "Підтримка"].map((item, index) => (
           <NavBarItem key={item + index} title={item}  />
-        ))}
+        ))} */}
+        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+          <Link to="/transfer">Переказ</Link>
+        </li>
+        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+          <Link to="/convert">Обмін</Link>
+        </li>
+        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+          <Link to="/Github">GitHub</Link>
+        </li>
+        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+          <Link to="/support">Підтримка</Link>
+        </li>
+
         
         <li className="bg-[#8899f2] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]">
           Під'єднати гаманець
