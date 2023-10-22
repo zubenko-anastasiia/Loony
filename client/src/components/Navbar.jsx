@@ -13,8 +13,14 @@ const Navbar = () => {
   const [toggleMenu, setToggleMenu] = React.useState(false);
 
   return (
-    <nav className="sticky top-3 items-center w-9/12 rounded-full bg-white backdrop-filter backdrop-blur-lg bg-opacity-20">
-    <div className=' flex md:justify-center justify-between  items-center object-top p-4 h-16 '>
+  
+    
+    <div className=" relative top-3 p-2 w-9/12 h-16  ">
+     
+      <nav className="sticky items-center rounded-full bg-white backdrop-filter backdrop-blur-lg bg-opacity-20">
+    
+        <div className=' flex md:justify-center justify-between  items-center  '>
+      
       
       <div className='md:flex-[0.5] flex-initial justify-center items-center'>
        <Link to="/"> <img src={logo} alt="logo" className="w-20 cursor-pointer" /></Link>
@@ -24,7 +30,7 @@ const Navbar = () => {
         {/* {["Переказ", "Обмін", "GitHub", "Підтримка"].map((item, index) => (
           <NavBarItem key={item + index} title={item}  />
         ))} */}
-        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+        <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
           <Link to="/transfer">Переказ</Link>
         </li>
         <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
@@ -63,7 +69,7 @@ const Navbar = () => {
         )}
       </div>
       </div>
-    </nav>
+    </nav></div>
 
   )
 };
