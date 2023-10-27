@@ -1,6 +1,7 @@
 import { AiFillAlipayCircle } from "react-icons/ai";
 import {SiEthereum } from "react-icons/si";
 import {BsInfoCircle} from "react-icons/bs";
+import { useTranslation } from 'react-i18next';
 
 import {Loader}  from "./";
 
@@ -26,13 +27,13 @@ const Welcome =()=>{
     const handleSubmit = ()=>{
 
     }
-
+    const { t, i18n } = useTranslation();
     return(
     <div className="flex w-full justify-center items-center ">
       <div className="flex mf:flex-row flex-col justify-between md:p-20 py-12 px-4">
         <div className="basis-1/2 mt-6 justify-between pr-15 ">
             <h1 className="text-3xl  sm:text-5xl py-1 text-gradient">
-            Відправляй криптовалюту <br /> з будь-якої точки світу
+            {t('main.header')}<br /> з будь-якої точки світу
             </h1>
             <p className="font-serif  mt-5 text-white  md:w-9/12 w-11/12 text-lg">
             Досліджуйте криптосвіт. Легко обмінюйте та пересилайте криптовалюти на Loony.

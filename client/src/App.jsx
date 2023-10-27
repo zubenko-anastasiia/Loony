@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useTranslation} from 'react-i18next';
 //import reactLogo from './assets/react.svg'
 //import viteLogo from '/vite.svg'
 //import './App.css'
@@ -6,7 +7,9 @@ import {BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage } from "./components";
 
-const App = () => (
+function App() {
+  const { t, i18n } = useTranslation();
+  return (
   <BrowserRouter>
   <div className="min-h-screen">
       <div className="gradient-bg-welcome">
@@ -27,7 +30,15 @@ const App = () => (
     </div>
     </BrowserRouter> 
 
-);
+);}
 
-export default App;
+function WrappedApp() {
+  return (
+    <Suspense fallback="...loading">
+      <App />
+    </Suspense>
+  )
+}
+
+export default WrappedApp;
 
