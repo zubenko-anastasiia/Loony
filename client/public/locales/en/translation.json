@@ -1,12 +1,26 @@
 {
     "main": {
-      "header": "Send a cryptocurrency"
+      "header": ""
     },
     "system":{
-      "language":"Eng"
+      "language":"Eng",
+      "transfer":"Transfer",
+      "exchange":"Exchange",
+      "support":"Support",
+      "connectAWallet":"Connect Wallet"
+    },
+    "welcome":{
+      "opening":"Send a cryptocurrency  from every part of the world",
+      "underOpening":"Explore the crypto world. Easily exchange and send cryptocurrencies at Loony"
+    },
+    "footer":{
+      "about":"About Us",
+      "license":"License",
+      "support":"Support"
     }
 
   }
 
   
+
 

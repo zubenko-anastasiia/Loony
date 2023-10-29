@@ -37,19 +37,19 @@ const { t, i18n } = useTranslation();
           <ul className="flex space-x-4 justify-between items-center  text-white  " >
             
             <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
-              <Link to="/transfer">Переказ</Link>
+              <Link to="/transfer">{t('system.transfer')}</Link>
             </li>
             <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
-              <Link to="/convert">Обмін</Link>
+              <Link to="/convert">{t('system.exchange')}</Link>
             </li>
             <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
               <Link to="/Github">GitHub</Link>
             </li>
             <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
-              <Link to="/support">Підтримка</Link>
+              <Link to="/support">{t('system.support')}</Link>
             </li>
             <li className="bg-[#8899f2] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]">
-              Під'єднати гаманець
+              {t('system.connectAWallet')}
             </li>
             <li className="mx-4 justify-between rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
               <Menu>
