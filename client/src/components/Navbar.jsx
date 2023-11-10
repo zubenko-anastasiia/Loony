@@ -23,15 +23,15 @@ const [toggleMenu, setToggleMenu] = React.useState(false);
 
 const { t, i18n } = useTranslation();
   return (
-    <div className=" relative top-3 p-2 w-9/12 h-16  ">
+    <header className="sticky inset-x-0 top-5 z-50 ">
 
-      <nav className="sticky items-center rounded-full bg-white backdrop-filter backdrop-blur-lg bg-opacity-20">
+      <nav className=" items-center rounded-full bg-white backdrop-filter backdrop-blur-lg bg-opacity-20">
 
         <div className=' flex md:justify-center justify-between  items-center  '>
 
 
           <div className='md:flex-[0.5] flex-initial justify-center items-center'>
-            <Link to="/"> <img src={logo} alt="logo" className="w-20 cursor-pointer" /></Link>
+            <Link to="/"> <img src={logo} alt="logo" className="w-16 cursor-pointer" /></Link>
           </div>
 
           <ul className="flex space-x-4 justify-between items-center  text-white  " >
@@ -39,19 +39,23 @@ const { t, i18n } = useTranslation();
             <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
               <Link to="/transfer">{t('system.transfer')}</Link>
             </li>
-            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
               <Link to="/convert">{t('system.exchange')}</Link>
             </li>
-            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
-              <Link to="/Github">GitHub</Link>
+            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
+            <a href="https://github.com/zubenko-anastasiia/Loony">GitHub</a>
             </li>
-            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+            <li className="mx-4 rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
               <Link to="/support">{t('system.support')}</Link>
             </li>
-            <li className="bg-[#8899f2] py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]">
+          </ul>
+
+
+            <button className="bg-[#8899f2] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
               {t('system.connectAWallet')}
-            </li>
-            <li className="mx-4 justify-between rounded-full cursor-pointer hover:bg-[#d0bfe83a]">
+            </button>
+        
+            <div className="mx-4 justify-between rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
               <Menu>
                 <MenuHandler>
                   <Button>  {t('system.language')}</Button>
@@ -67,8 +71,9 @@ const { t, i18n } = useTranslation();
                   ))}
                 </MenuList>
               </Menu>
-            </li>
-          </ul>
+            </div>
+          
+
           <div className="flex relative">
             {!toggleMenu && (
               <HiMenuAlt4 fontSize={28} className="text-white md:hidden cursor-pointer" onClick={() => setToggleMenu(true)} />
@@ -89,7 +94,8 @@ const { t, i18n } = useTranslation();
             )}
           </div>
         </div>
-      </nav></div>
+      </nav>
+      </header>
 
   )
 };

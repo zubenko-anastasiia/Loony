@@ -2,10 +2,11 @@ import { AiFillAlipayCircle } from "react-icons/ai";
 import {SiEthereum } from "react-icons/si";
 import {BsInfoCircle} from "react-icons/bs";
 import { useTranslation } from 'react-i18next';
+import Fade from 'react-reveal/Fade';
 
 import {Loader}  from "./";
 
-const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-fuchsia-400 text-sm font-light text-white";
+//const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-fuchsia-400 text-sm font-light text-white";
 
 const Input = ({placeholder,name,type,value, handleChange}) =>(
     <input
@@ -20,64 +21,58 @@ const Input = ({placeholder,name,type,value, handleChange}) =>(
 
 const Welcome =()=>{
 
-    const connectWallet = ()=>{
+    const connectWallet = ()=>{}
 
-    }
-
-    const handleSubmit = ()=>{
-
-    }
+    const handleSubmit = ()=>{}
+    
     const { t, i18n } = useTranslation();
+    
     return(
-    <div className="flex w-full justify-center items-center ">
-      <div className="flex mf:flex-row flex-col justify-between md:p-20 py-12 px-4">
-        <div className="basis-1/2 mt-6 justify-between pr-15 ">
-            <h1 className="text-3xl  sm:text-5xl py-1 text-gradient">
-            {t('welcome.opening')}
-            </h1>
-            <p className="font-serif  mt-5 text-white  md:w-9/12 w-11/12 text-lg">
-            {t('welcome.underOpening')}
-            </p>
+    <>
+        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+            <div className="inset-0 text-center">
+                    <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                        {t('welcome.opening')}
+                    </h1>
+                    <p className="mt-6 text-lg leading-8 text-white">           
+                        {t('welcome.underOpening')}
+                    </p>
             
-                <button type="button" onClick={connectWallet} className="flex justify-center items-center   my-5  bg-[#8899f2] p-3 rounded-full cursor-pointer hover:bg-[#2546bd]">
-                <p className="text-white text-base font-semibold">{t('system.connectAWallet')}</p> 
-            </button>
-            
-            
-
-            
-
-            {/* <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10 header-glassmorphism">
-                <div className={`rounded-tl-2xl ${commonStyles}`}> Надійність</div>
-                <div className={commonStyles}>Безпека</div>
-                <div className={`sm:rounded-tr-2xl ${commonStyles}`}>Eфіріум</div>
-                <div className={`sm:rounded-bl-2xl ${commonStyles}`}>Веб 3.0</div>
-                <div className={commonStyles}>Низькі комісії</div>
-                <div className={`rounded-br-2xl ${commonStyles}`}>Блокчейн</div>
-            </div> */}
-        </div>    
-
-            <div className="basis-1/2 pl-40">
-                <div className="p-3  flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card .white-glassmorphism ">
-                    <div className="flex justify-between flex-col w-full h-full">
-                        <div className="flex justify-between items-start">
+                    <div className="mt-10 flex items-center justify-center gap-x-6">
+                        <button type="button" onClick={connectWallet} className="rounded-md bg-[#8899f2] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            <p className="text-white text-base font-semibold">{t('system.connectAWallet')}</p> 
+                        </button>
+                    </div>  
+                </div>  
+        
+{/* import Fade */}
+        <div>
+            <Fade top>
+              <h1>React Reveal</h1>
+            </Fade>
+        </div>
+        <div className="mx-auto mt-40 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+        <div className="flex justify-center items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card white-glassmorphism ">
+            <div className="flex justify-between flex-col w-full h-full  p-3">
+                <div className="flex justify-between items-start mt-40 ">
                             <div className="w-10 h-10 rounded-full border-2 border-white flex justify-center items-center">
                                 <SiEthereum fontSize={21} color="#fff"/>
                             </div>
                             <BsInfoCircle fontSize={17} color="#fff"/>
-                        </div>
-                    <div>
+                </div>
+                <div>
                     <p className="text-white font-light text-sm">Адреса</p>
                     <p className="text-white font-semibold text-lg mt-1">Ethereum </p>
-                    </div>
                 </div>
             </div>
+            </div>
+            
 
-        <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-            <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={()=>{}} placeholder-white/>
-            <Input className="placeholder-white" placeholder="Кількість (ETH)" name="amount" type="number" handleChange={()=>{}}/>
-            <Input className="placeholder-white" placeholder="Повідомлення" name="message" type="text" handleChange={()=>{}}/>
-            <div className="h-[1px] w-full bg-white my-2"/>
+            <div className="sm:w-96 w-full flex flex-col justify-center items-center blue-glassmorphism">
+                <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={()=>{}} placeholder-white/>
+                <Input className="placeholder-white" placeholder="Кількість (ETH)" name="amount" type="number" handleChange={()=>{}}/>
+                <Input className="placeholder-white" placeholder="Повідомлення" name="message" type="text" handleChange={()=>{}}/>
+                <div className="h-[1px] w-full bg-white my-2"/>
                             
                             {false ? (
                                 <Loader/>
@@ -89,11 +84,11 @@ const Welcome =()=>{
                                     Надіслати
                                 </button>
                             )}
-             </div>
             </div>
         </div>
+        
     </div>
-
+</>
 );
 }
 
