@@ -11,8 +11,9 @@ function App() {
   const { t, i18n } = useTranslation();
   return (
   <BrowserRouter>
-  <div className="min-h-screen">
-      <div className="gradient-bg-welcome">
+  <div className='gradient-bg-welcome'>
+  
+      <div className=" relative  ">
         
         <Navbar />
         
@@ -26,6 +27,7 @@ function App() {
 
           </Routes>
         <Footer />
+        
       </div>
     </div>
     </BrowserRouter> 
