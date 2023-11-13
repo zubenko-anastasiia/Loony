@@ -5,7 +5,7 @@ import { useTranslation} from 'react-i18next';
 //import './App.css'
 import {BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage } from "./components";
+import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage } from "./components/index";
 
 function App() {
   const { t, i18n } = useTranslation();

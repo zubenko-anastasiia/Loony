@@ -74,6 +74,13 @@ background: radial-gradient(circle, rgba(255,219,234,1) 0%, rgba(255,224,237,1) 
   -webkit-backdrop-filter: blur(5px);
  
 }
+.btn-glassmorphism {
+  background: rgba(74,81,105,255);
+  border-radius: 16px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(5px);
+ 
+}
 
 .eth-cardA {
   background-color:hsla(263,87%,74%,0.99);
