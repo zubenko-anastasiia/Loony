@@ -21,7 +21,9 @@ const Input = ({placeholder,name,type,value, handleChange}) =>(
 
 const Welcome =()=>{
 
-    const connectWallet = ()=>{}
+    const connectWallet = ()=>{
+        
+    }
 
     const handleSubmit = ()=>{}
     
@@ -29,7 +31,7 @@ const Welcome =()=>{
     
     return(
     <>
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+        <div className="mx-auto max-w-4xl sm:py-48">
             <div className="inset-0 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                         {t('welcome.opening')}
@@ -46,27 +48,29 @@ const Welcome =()=>{
                 </div>  
         
 {/* import Fade */}
-        <div>
+<div className="flex mf:flex-row flex-col justify-between mt-28">
+        <div className="basis-2/3 mt-6 justify-between  ">
             <Fade top>
-              <h1>React Reveal</h1>
+              <h1 className="text-4xl font-bold text-center text-white">Send and Receive money instantly from every part of the world</h1>
             </Fade>
         </div>
-        <div className="mx-auto mt-40 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-        <div className="flex justify-center items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card white-glassmorphism ">
-            <div className="flex justify-between flex-col w-full h-full  p-3">
-                <div className="flex justify-between items-start mt-40 ">
+        
+        <div className="basis-1/3 pl-48">
+                <div className="mx-auto mt-40 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+                    <div className="p-3  flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card .white-glassmorphism ">
+                    <div className="flex justify-between flex-col w-full h-full">
+                        <div className="flex justify-between items-start">
                             <div className="w-10 h-10 rounded-full border-2 border-white flex justify-center items-center">
                                 <SiEthereum fontSize={21} color="#fff"/>
                             </div>
                             <BsInfoCircle fontSize={17} color="#fff"/>
-                </div>
-                <div>
+                        </div>
+                    <div>
                     <p className="text-white font-light text-sm">Адреса</p>
                     <p className="text-white font-semibold text-lg mt-1">Ethereum </p>
+                    </div>
                 </div>
             </div>
-            </div>
-            
 
             <div className="sm:w-96 w-full flex flex-col justify-center items-center blue-glassmorphism">
                 <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={()=>{}} placeholder-white/>
@@ -85,9 +89,12 @@ const Welcome =()=>{
                                 </button>
                             )}
             </div>
+
         </div>
-        
     </div>
+</div>
+</div>
+
 </>
 );
 }
