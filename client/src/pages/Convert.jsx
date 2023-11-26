@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import TradingViewWidget from '../components/Chart'
 import { useTranslation } from 'react-i18next';
 import {BsFillArrowDownCircleFill} from "react-icons/bs";
@@ -13,6 +14,7 @@ const Input = ({placeholder,name,type,value, handleChange}) =>(
   className=" w-full h-16 rounded-sm p-2 outline-none bg-transparent text-white placeholder-gray-200 border-none text-sm white-glassmorphism "
   />
 );
+
 const locales = {
   en: { title: 'English' },
   ua: { title: 'Українська' },
@@ -44,14 +46,11 @@ const Convert =()=>{
             <div class="relative z-0 w-full mb-6 group">
               {/* <Input className="placeholder-white" placeholder="ETH" name="amount" type="number" handleChange={()=>{}}/> */}
               <select   className=" w-full h-16 rounded-sm p-2 outline-none bg-transparent text-black placeholder-gray-200 border-none text-sm white-glassmorphism " name="inChangeCurr">
-                <option className="bg-transparent white-glassmorphism">ETH</option>
-                <option className="bg-transparent white-glassmorphism">SOL</option>
-                <option className="bg-transparent white-glassmorphism">BTC</option>
-                <option className="bg-transparent white-glassmorphism">DOT</option>
+                <option className="bg-transparent white-glassmorphism">USD</option>
               </select>
             </div>
             <div class="relative z-0 w-full mb-6 group">
-              <Input className="placeholder-white" placeholder="Кількість (ETH)" name="inChangeAmount" type="number" handleChange={()=>{}}/>
+              <Input className="placeholder-white" placeholder="Кількість (USD)" name="inChangeAmount" type="number" handleChange={()=>{}}/>
             </div>
           </div>
           <BsFillArrowDownCircleFill fontSize={28} color="#4a5169"/>
@@ -66,7 +65,10 @@ const Convert =()=>{
             </div>
             <div class="relative z-0 w-full mb-6 group">
               <Input className="placeholder-white" placeholder="Кількість" name="outChangeAmount" type="number" handleChange={()=>{}}/>
-            </div>
+            <p class=" ml-4 text-xs text-gray-600">
+              Fee:0.002
+            </p></div>
+            
           </div>
           <div className="h-[1px] w-full bg-white my-2"/>
                             
@@ -77,7 +79,7 @@ const Convert =()=>{
                                 type="button"
                                 onClick={handleSubmit}
                                 className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-md cursor-pointer  hover:bg-[#be8defd5] btn-glassmorphism">
-                                    Надіслати
+                                    {t('buttons.convert')}
                                 </button>
                             )}
              </div>

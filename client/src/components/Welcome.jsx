@@ -47,11 +47,11 @@ const Welcome =()=>{
                     </div>  
                 </div>  
         
-{/* import Fade */}
+
 <div className="flex mf:flex-row flex-col justify-between mt-28">
-        <div className="basis-2/3 mt-6 justify-between  ">
+        <div className="basis-2/3 mt-28 justify-between  ">
             <Fade top>
-              <h1 className="text-4xl font-bold text-center text-white">Send and Receive money instantly from every part of the world</h1>
+              <h1 className="text-4xl font-bold text-center text-white">{t('welcome.popUptext')}</h1>
             </Fade>
         </div>
         
@@ -85,7 +85,7 @@ const Welcome =()=>{
                                 type="button"
                                 onClick={handleSubmit}
                                 className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-full cursor-pointer  hover:bg-[#be8defd5] header-glassmorphism">
-                                    Надіслати
+                                    {t('buttons.sendTo')}
                                 </button>
                             )}
             </div>

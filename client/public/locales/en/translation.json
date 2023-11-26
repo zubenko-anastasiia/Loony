@@ -11,12 +11,26 @@
     },
     "welcome":{
       "opening":"Send a cryptocurrency  from every part of the world",
-      "underOpening":"Explore the crypto world. Easily exchange and send cryptocurrencies at Loony"
+      "underOpening":"Explore the crypto world. Easily exchange and send cryptocurrencies at Loony",
+      "popUptext":"Send and Receive money instantly from every part of the world"
     },
     "footer":{
       "about":"About Us",
       "license":"License",
       "support":"Support"
+    },
+    "buttons":{
+      "sendTo":"Send",
+      "convert":"Convert",
+      "openForm":"Open Form"
+      
+    },
+    "questionForm":{
+      "Name":"Name",
+      "Email":"Email",
+      "Question":"Your Question",
+      "cardFormTitle":"Cant find answer on your question?",
+      "cardFormText":"Write down your email and question. Our support team will answer you within an hour."
     }
 
   }

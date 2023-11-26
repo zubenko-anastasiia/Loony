@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import logo from "../images/logo.png";
 import { Typography } from "@material-tailwind/react";
-import Prices from "./Prices"
+
  
 const Footer=()=> {
   const { t, i18n } = useTranslation();
   return (
     <footer className=" inset-x-0 bottom-0 ">
-      {/* <Prices/> */}
+     
       <div className="w-full backdrop-filter backdrop-blur-lg bg-opacity-20 p-8">
       <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12  text-center md:justify-between">
         <img src={logo} alt="logo" className="w-12" />
