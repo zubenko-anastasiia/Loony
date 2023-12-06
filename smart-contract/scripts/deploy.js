@@ -1,14 +1,16 @@
-const main = async () => {
-  
+const hre = require("hardhat");
 
+async function main() {
+  console.log("deploying...");
+  const SingleSwap = await hre.ethers.getContractFactory("SingleSwap");
+  const singleSwap = await SingleSwap.deploy();
 
-  const transactions = await ethers.deployContract("Transactions");
-  console.log("Transactions address: ",await transactions.getAddress());
+  await singleSwap.deployed();
+
+  console.log("Single Swap contract deployed: ", singleSwap.address);
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

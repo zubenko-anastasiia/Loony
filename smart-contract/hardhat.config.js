@@ -58,17 +58,16 @@
 // Private Key: 0xde9be858da4a475276426320d5e9262ecfc3ba460bfac56360bfa6c4c28b4ee0
 
 // Account #19: 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199 (10000 ETH)
-// Private Key: 0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e
-
 require("@nomicfoundation/hardhat-toolbox");
-const SEPOLIA_PRIVATE_KEY = "24383e9746e58d300bc4b50c02c567e54704a2ff5d93eed7ca654523f2ab7c69";
-const ALCHEMY_API_KEY = "TjfSmtTfMm4gy2aWZnA9fleWoU4nMLUA";
-module.exports ={
-  solidity: '0.8.0',
+require("dotenv").config();
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.7.6",
   networks: {
-    sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-      accounts: [SEPOLIA_PRIVATE_KEY]
-    }
-  }
-}
+    goerli: {
+      url: process.env.INFURA_GOERLI_ENDPOINT,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+  },
+};
