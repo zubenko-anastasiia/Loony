@@ -1,9 +1,11 @@
+import React, {useContext} from "react";
 import { AiFillAlipayCircle } from "react-icons/ai";
 import {SiEthereum } from "react-icons/si";
 import {BsInfoCircle} from "react-icons/bs";
 import { useTranslation } from 'react-i18next';
-import Fade from 'react-reveal/Fade';
 
+
+import { TransactionContext } from "../context/TransactionContext";
 import {Loader}  from "./";
 
 //const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-fuchsia-400 text-sm font-light text-white";
@@ -20,10 +22,8 @@ const Input = ({placeholder,name,type,value, handleChange}) =>(
 );
 
 const Welcome =()=>{
+    const {connectWallet} = useContext(TransactionContext);
 
-    const connectWallet = ()=>{
-        
-    }
 
     const handleSubmit = ()=>{}
     
@@ -50,9 +50,9 @@ const Welcome =()=>{
 
 <div className="flex mf:flex-row flex-col justify-between mt-28">
         <div className="basis-2/3 mt-28 justify-between  ">
-            <Fade top>
+            
               <h1 className="text-4xl font-bold text-center text-white">{t('welcome.popUptext')}</h1>
-            </Fade>
+            
         </div>
         
         <div className="basis-1/3 pl-48">

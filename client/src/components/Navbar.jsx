@@ -1,8 +1,10 @@
-import React from "react";
+import React, {useContext} from "react";
 import  { HiMenuAlt4 }  from "react-icons/hi";
 import  { AiOutlineClose }  from "react-icons/ai";
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+
+import { TransactionContext } from "../context/TransactionContext";
 
 
 import {Menu,MenuHandler,MenuList,MenuItem,Button,} from "@material-tailwind/react";
@@ -21,6 +23,7 @@ const locales = {
 
 const Navbar = () => {
 const [toggleMenu, setToggleMenu] = React.useState(false);
+const {connectWallet} = useContext(TransactionContext);
 
 const { t, i18n } = useTranslation();
   return (
@@ -52,7 +55,7 @@ const { t, i18n } = useTranslation();
           </ul>
 
 
-            <button className="bg-[#8899f2] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
+            <button type="button" onClick={connectWallet} className="bg-[#8899f2] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
               {t('system.connectAWallet')}
             </button>
         
