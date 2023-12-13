@@ -29,8 +29,8 @@ const Convert =()=>{
   }
   const { t, i18n } = useTranslation();
   return(
-      <div className="flex w-full justify-center items-center">
-      <div className="flex mf:flex-row flex-col mt-10 items-start justify-between md:p-20 py-12 px-4">
+      <div className="flex w-full h-screen justify-center items-center">
+      <div className="flex mf:flex-row flex-col  items-start justify-between md:p-20 py-12 px-4">
         <div className="flex flex-1 justify-start items-start flex-col mf:mr-10">
           <div className="w-fit">
             
@@ -38,7 +38,7 @@ const Convert =()=>{
             </div>
             
           </div>
-          <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10">
+          <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 ">
           <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
 
           <div className=" justify-center text-center font-bold text-2xl text-gray-700"> {t('system.exchange')}</div>    
