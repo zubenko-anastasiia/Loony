@@ -7,6 +7,7 @@ const SwapField = React.forwardRef(({ obj }, inputRef) => {
   return (
     <div className='flex items-center rounded-xl'>
       <input
+      id={id}
         ref={inputRef}
         className={getInputClassname()}
         type={'number'}
@@ -18,10 +19,10 @@ const SwapField = React.forwardRef(({ obj }, inputRef) => {
       />
 
       <Selector
-        id={id}
-        setToken={setToken}
+        
+        
         defaultValue={defaultValue}
-        ignoreValue={ignoreValue}
+        ignoreValue={ignoreValue}setToken={setToken}id={id}
       />
     </div>
   )

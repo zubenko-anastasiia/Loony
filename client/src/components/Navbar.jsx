@@ -1,13 +1,14 @@
 import React, {useContext} from "react";
 import  { HiMenuAlt4 }  from "react-icons/hi";
 import  { AiOutlineClose }  from "react-icons/ai";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { TransactionContext } from "../context/TransactionContext";
 
 
-import {Menu,MenuHandler,MenuList,MenuItem,Button,} from "@material-tailwind/react";
+//import {Menu,MenuHandler,MenuList,MenuItem,Button,} from "@material-tailwind/react";
 
 import logo from "../images/logo.png";
 
@@ -60,13 +61,31 @@ const { t, i18n } = useTranslation();
             </button>
         
             <div className="mx-4 justify-between rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
-              <Menu>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button 
+                  variant="bordered" 
+                >
+                  {t('system.language')}
+                </Button>
+              </DropdownTrigger>
+              
+              <DropdownMenu aria-label="Static Actions" key={locales}>
+              {Object.keys(locales).map((locale) => (
+                <DropdownItem style={{ fontWeight: i18n.resolvedLanguage === locale ? 'bold' : 'normal' }}type="submit" onClick={() => i18n.changeLanguage(locale)}>
+                  {locales[locale].title}
+                </DropdownItem>
+              ))}
+              </DropdownMenu>
+            </Dropdown>
+             
+              {/* <Menu>
                 <MenuHandler>
                   <Button>  {t('system.language')}</Button>
                 </MenuHandler>
                 <MenuList>
                   {Object.keys(locales).map((locale) => (
-                    <MenuItem>
+                    <MenuItem key={locales}>
                       <button style={{ fontWeight: i18n.resolvedLanguage === locale ? 'bold' : 'normal' }}
                         type="submit" onClick={() => i18n.changeLanguage(locale)}>
                         {locales[locale].title}
@@ -74,7 +93,7 @@ const { t, i18n } = useTranslation();
                     </MenuItem>
                   ))}
                 </MenuList>
-              </Menu>
+              </Menu> */}
             </div>
           
 
