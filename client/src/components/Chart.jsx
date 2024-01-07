@@ -1,11 +1,14 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
+import {ConnectToChartContext} from "../pages/Convert"
 
 let tvScriptLoadingPromise;
 
 export default function TradingViewWidget() {
   const onLoadScriptRef = useRef();
+  const {srcToken, destToken} = useContext(ConnectToChartContext);
 
+  
   useEffect(
     () => {
       onLoadScriptRef.current = createWidget;
@@ -26,12 +29,17 @@ export default function TradingViewWidget() {
 
       return () => onLoadScriptRef.current = null;
 
-      function createWidget() {
+      function createWidget(srcToken, destToken) {
+       
+        let Token1="BYBIT:ETHUSDT";
+        if(srcToken=="ETH" && destToken =="BTC")
+        Token1 = "BYBIT:ETHBTC";
+
         if (document.getElementById('tradingview_78993') && 'TradingView' in window) {
           new window.TradingView.widget({
             width: "700",
             height: "400",
-            symbol: "BINANCE:BTCUSDT",
+            symbol: Token1,//"BYBIT:ETHBTC"  "BYBIT:ETHUSDT" "BYBIT:BTCUSDT"
             interval: "D",
             timezone: "Etc/UTC",
             theme: "light",
@@ -39,7 +47,7 @@ export default function TradingViewWidget() {
             locale: "en",
             enable_publishing: false,
             allow_symbol_change: true,
-            watchlist: ["BINANCE:ETHUSDT","BINANCE:SOLUSDT"],
+            watchlist: ["BYBIT:ETHBTC","BYBIT:BTCUSDT"],
             container_id: "tradingview_78993"
           });
         }

@@ -7,5 +7,6 @@ export { default as Transfer } from "../pages/Transfer";
 export { default as Support } from "../pages/Support";
 export { default as Github } from "../pages/Github";
 export { default as ErrorPage } from "../pages/ErrorPage";
+export {default as AboutUs} from "../pages/AboutUs";
 
 

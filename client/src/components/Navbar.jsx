@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { TransactionContext } from "../context/TransactionContext";
+import {shortenAddress} from "../utils/ShortAddress";
+
 
 
 //import {Menu,MenuHandler,MenuList,MenuItem,Button,} from "@material-tailwind/react";
@@ -24,7 +26,7 @@ const locales = {
 
 const Navbar = () => {
 const [toggleMenu, setToggleMenu] = React.useState(false);
-const {connectWallet} = useContext(TransactionContext);
+const {connectWallet,currentAccount} = useContext(TransactionContext);
 
 const { t, i18n } = useTranslation();
   return (
@@ -55,10 +57,20 @@ const { t, i18n } = useTranslation();
             </li>
           </ul>
 
+            <div>
+            {!currentAccount ?(
+              <button type="button" onClick={connectWallet} className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
+               {t('system.connectAWallet')}
+              </button>
+            ):(
+              <div className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer">
+                {shortenAddress(currentAccount)}
+              </div>
+            )}
+            </div>
 
-            <button type="button" onClick={connectWallet} className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
-              {t('system.connectAWallet')}
-            </button>
+        
+            
         
             <div className="mx-4 justify-between rounded-full cursor-pointer hover:bg-[#d0bfe83a] hover:shadow-xl">
             <Dropdown>

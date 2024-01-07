@@ -20,7 +20,8 @@ const Footer=()=> {
               color="white"
               className="font-normal transition-colors hover:text-purple-500 focus:text-blue-500"
             >
-              {t('footer.about')}
+              <Link to="/aboutUs">{t('footer.about')}</Link>
+
             </Typography>
           </li>
           <li>

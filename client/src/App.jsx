@@ -5,7 +5,7 @@ import { useTranslation} from 'react-i18next';
 //import './App.css'
 import {BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage } from "./components/index";
+import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage, AboutUs } from "./components/index";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -23,6 +23,7 @@ function App() {
             <Route path="/transfer" element={<Transfer />} />
             <Route path="/support" element={<Support />} />
             <Route path="/Github" element={<Github />} />
+            <Route path="/aboutUs" element={<AboutUs />} />
             <Route path="*" element={<ErrorPage />} />
 
           </Routes>

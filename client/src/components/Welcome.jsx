@@ -1,10 +1,11 @@
-import React, {useContext} from "react";
+import React, {useContext, useRef} from "react";
 import { AiFillAlipayCircle } from "react-icons/ai";
 import {SiEthereum } from "react-icons/si";
 import {BsInfoCircle} from "react-icons/bs";
+import {ArrowSmDownIcon } from '@heroicons/react/outline'
 import { useTranslation } from 'react-i18next';
 import Services from "./Services";
-
+ import Card from "../components/Card"
 
 import { TransactionContext } from "../context/TransactionContext";
 import {Loader}  from "./";
@@ -45,10 +46,16 @@ const Welcome =()=>{
     }
     
     const { t, i18n } = useTranslation();
+
+    const targetRef = useRef(null);
+
+    const handleScroll = () => {
+      targetRef.current.scrollIntoView({behavior: 'smooth', block: 'start'});
+    };
     
     return(
     <>
-        <div className="mx-auto max-w-4xl sm:py-48">
+        <div className="mx-auto w-11/12 sm:py-48">
             <div className="h-screen inset-0 text-center">
                     <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
                         {t('welcome.opening')}
@@ -62,46 +69,55 @@ const Welcome =()=>{
                         (<button type="button" onClick={connectWallet} className="rounded-md bg-[#72569c] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                             <p className="text-white text-base font-semibold">{t('system.connectAWallet')}</p> 
                         </button>)}
-                    </div>  
+                        
+                    </div>
+                    <div className="mt-5 flex items-center justify-center ">
+                      <ArrowSmDownIcon
+                        className=' h-7 p-0.5 bg-[#72569c40] border-1 border-[#72569c] text-[#72569c] rounded-xl cursor-pointer hover:scale-110'
+                        onClick={handleScroll}
+                    />
+                    </div>
                 </div>  
-        <Services/>
-
-<div className="flex mf:flex-row flex-col justify-between ">
-        <div className="basis-2/3 justify-between  ">
-            
-              <h1 className="text-4xl font-bold text-center text-white">{t('welcome.popUptext')}</h1>
-            
+        <div ref={targetRef} className="h-screen inset-0 " >
+            <Services />
         </div>
         
-        <div className="basis-1/3 pl-48">
-                <div className="mx-auto mt-40 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-                    <div className="p-3  flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card .white-glassmorphism ">
-                    <div className="flex justify-between flex-col w-full h-full">
-                        <div className="flex justify-between items-start">
-                            <div className="w-10 h-10 rounded-full border-2 border-white flex justify-center items-center">
-                                <SiEthereum fontSize={21} color="#fff"/>
-                            </div>
-                            <BsInfoCircle fontSize={17} color="#fff"/>
-                        </div>
-                    <div>
-                    <p className="text-white font-light text-sm">{shortenAddress(currentAccount)}</p>
-                    <p className="text-white font-semibold text-lg mt-1">Ethereum </p>
-                    </div>
-                </div>
-            </div>
+
+<div className="flex mf:flex-row flex-col items-center justify-between md:p-20 py-12 px-4">
+<div className="flex-1 flex flex-col justify-start items-start">
+        <h1 className="text-white text-xl sm:text-5xl py-2 ">
+        {t('welcome.sendingTitle.1')}
+        <br/>
+        {t('welcome.sendingTitle.2')}
+        {t('welcome.sendingTitle.3')}
+
+        </h1>
+        <p className="text-left my-2 text-white font-light md:w-9/12 w-11/12 text-base">
+        {t('welcome.sendingText')}
+        </p>
+      </div>
+        
+        <div className="">
+            <Card/>
+                
 
             <div className="sm:w-96 w-full flex flex-col justify-center items-center blue-glassmorphism">
                 <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={handleChange} placeholder-white/>
                 <Input className="placeholder-white" placeholder="Кількість (ETH)" name="amount" type="number" handleChange={handleChange}/>
                 <Input className="placeholder-white" placeholder="Повідомлення" name="message" type="text" handleChange={handleChange}/>
                 <div className="h-[1px] w-full bg-white my-2"/>
-                                       {false ? (
-                                <Loader/>
+                {!currentAccount ? (
+                                <button
+                                type="button"
+                                onClick={connectWallet}
+                                className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-full cursor-pointer  hover:bg-[#be8defd5] header-glassmorphism">
+                                    {t('system.connectAWallet')}
+                                </button>
                             ) : (
                                 <button
                                 type="button"
                                 onClick={handleSubmit}
-                                className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-full cursor-pointer  hover:bg-[#be8defd5] header-glassmorphism">
+                                className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-full cursor-pointer  hover:bg-[#be8defd5] ">
                                     {t('buttons.sendTo')}
                                 </button>
                             )}
@@ -110,7 +126,7 @@ const Welcome =()=>{
         </div>
     </div>
 </div>
-</div>
+
 
 </>
 );

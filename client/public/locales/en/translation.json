@@ -12,7 +12,15 @@
     "welcome":{
       "opening":"Send a cryptocurrency  from every part of the world",
       "underOpening":"Explore the crypto world. Easily exchange and send cryptocurrencies at Loony",
-      "popUptext":"Send and Receive money instantly from every part of the world"
+      "popUptext":"Send and Receive money instantly from every part of the world",
+      
+      "sendingTitle":{
+        "1":"Decentralized",
+        "2":"money transfers worldwide",
+        "3":""
+      },
+      "sendingText":"Send funds without unnecessary delays and hidden fees. Do it easily, quickly, and securely with our decentralized platform."
+
     },
     "footer":{
       "about":"About Us",
@@ -31,6 +39,34 @@
       "Question":"Your Question",
       "cardFormTitle":"Cant find answer on your question?",
       "cardFormText":"Write down your email and question. Our support team will answer you within an hour."
+    },
+    "supportQuestions":{
+        "1":"What is a decentralized exchange?",
+        "2":"What commission does Loony charge?",
+        "3":"Why did the transaction fail?",
+        "4":"What cryptocurrencies does Loony support?",
+        "5":"Do I have to pay a network fee if a transaction fails?"
+      },
+    "supportAnswers":{
+      "1":"Decentralized exchanges (DEX-exchanges) are platforms for trading cryptoassets that allow users to interact directly, without any intermediaries in the form of CEX exchanges: Binance, Coinbase, ByBit... All operations with cryptocurrency are carried out using smart contracts. DEX facilitates trading between traders without controlling their assets.",
+      "2":"Loony does not charge commissions for using the features we have implemented, but do not forget about the commissions of the blockchain itself.",
+      "3":{
+        "1a":"For example, if the Ethereum network has network congestion, the network fee can increase significantly. If you do not have sufficient funds to pay such a fee, the transaction may not be completed.",
+        "2a":"When the market fluctuates, so does the level of liquidity. When the total transaction amount is lower than the minimum withdrawal amount, the contract will stop the transaction, causing it to fail.",
+        "3a":"When a user submits multiple similar transactions, but the balance is high enough for one, all others sent after that transaction will not complete."   
+      },
+      "4":"At the time of writing, the list of trading pairs on Loony includes Ethereum, Bitcoin, USDC",
+      "5":"When you send/transfer tokens and interact with contracts or other activities on blockchains, you must pay network fees to miners or issuers for processing transactions. Since miners or valid users must calculate the network resources used to process the transaction, you must pay the fee regardless of whether the transaction was successful or not. The commission is not charged to the wallet, so we cannot refund it. Therefore, we do not recommend choosing a low network fee to save money, as this may cause the transaction to fail or be blocked. If transactions, you will have to pay another transaction fee to remove the lock to make this trade unfavorable."
+    },
+    "Services":{
+      "title":"Services that we continue to improve",
+      "subtitle":"The best choice for buying and selling your crypto assets, with the various super friendly services we offer",
+      "costOpt":"Cost Optimization",
+      "costOptText":"A key Loony advantage is our focus on cost optimization. We provide investors with nearly cost-free solutions, enhancing trading accessibility for everyone.",
+      "security":"Security at the Forefront",
+      "securityText":"At Loony, we prioritize security. Our development team meticulously addresses all security aspects, protecting smart contracts and implementing measures against attacks. This ensures users the highest confidence in cryptocurrency trading and exchange.",
+      "comperison":"Comparative Advantage",
+      "comperisonText":"Loony excels among DEXs with its advanced architecture and innovative approach. Our platform combines exceptional performance, reliability, and accessibility, making us the current best DEX. Our unique features and technologies redefine user expectations in trading experiences."
     }
 
   }

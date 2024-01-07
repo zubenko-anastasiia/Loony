@@ -38,10 +38,12 @@ const Support =()=>{
                     <div className="p-6">
                         <h5
                             className="mb-2 text-center text-xl leading-tight text-white ">
-                            Card title
+                            {t('supportQuestions.1')}
+
                         </h5>
                         <p className="mb-4 text-center text-neutral-800">
-                        Коли ви надсилаєте/переносите токени та взаємодієте з контрактами або іншими заходами в блокчейнах, ви повинні сплачувати мережеву комісію майнерам або емітентам за обробку транзакцій. Оскільки майнери або дійсні користувачі повинні обчислити ресурси мережі, використані для обробки транзакції, ви повинні сплатити комісію незалежно від того, чи транзакція була виконана, чи вона не була успішною.
+                        {t('supportAnswers.1')}
+
                         </p>
                     </div>
                 </div>
@@ -49,12 +51,11 @@ const Support =()=>{
                     <div className="p-6">
                         <h5
                             className="mb-2 text-center text-xl leading-tight text-white ">
-                            Card title
+                            {t('supportQuestions.5')}
                         </h5>
                         <p className="mb-4 text-center text-neutral-800">
-                            This is a longer card with supporting text below as a natural
-                            lead-in to additional content. This content is a little bit
-                            longer.
+                        {t('supportAnswers.5')}
+
                         </p>
                     </div>
                 </div>
@@ -62,12 +63,33 @@ const Support =()=>{
                     <div className="p-6">
                         <h5
                             className="mb-2 text-center text-xl leading-tight text-white ">
-                            Card title
+                            {t('supportQuestions.3')}
+                        </h5>
+                        <div className="mb-4 text-center text-neutral-800">
+
+                        <ul className="list-disc">
+                            <li >
+                            {t('supportAnswers.3.1a')}
+                            </li>
+                            <li>
+                            {t('supportAnswers.3.2a')}
+                            </li>
+                            <li>
+                            {t('supportAnswers.3.3a')}
+                            </li>
+                        </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div className="mx-3 mt-6 flex flex-col rounded-lg bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 sm:shrink-0 sm:grow sm:basis-0 ">
+                    <div className="p-6">
+                        <h5
+                            className="mb-2 text-center text-xl leading-tight text-white ">
+                            {t('supportQuestions.4')}
                         </h5>
                         <p className="mb-4 text-center text-neutral-800">
-                            This is a longer card with supporting text below as a natural
-                            lead-in to additional content. This content is a little bit
-                            longer.
+                        {t('supportAnswers.4')}
                         </p>
                     </div>
                 </div>
@@ -75,39 +97,25 @@ const Support =()=>{
                     <div className="p-6">
                         <h5
                             className="mb-2 text-center text-xl leading-tight text-white ">
-                            Card title
+                            {t('supportQuestions.2')}
                         </h5>
                         <p className="mb-4 text-center text-neutral-800">
-                            This is a longer card with supporting text below as a natural
-                            lead-in to additional content. This content is a little bit
-                            longer.
+                            {t('supportAnswers.2')}
                         </p>
                     </div>
                 </div>
                 <div className="mx-3 mt-6 flex flex-col rounded-lg bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 sm:shrink-0 sm:grow sm:basis-0 ">
-                    <div className="p-6">
-                        <h5
-                            className="mb-2 text-center text-xl leading-tight text-white ">
-                            Card title
-                        </h5>
-                        <p className="mb-4 text-center text-neutral-800">
-                            This is a longer card with supporting text below as a natural
-                            lead-in to additional content. This content is a little bit
-                            longer.
-                        </p>
-                    </div>
-                </div>
-                <div className="mx-3 mt-6 flex flex-col rounded-lg bg-white backdrop-filter backdrop-blur-lg bg-opacity-20 sm:shrink-0 sm:grow sm:basis-0 ">
-                    <div className="p-6">
+                    <div className="p-6 items-center">
                         <h5 className="mb-2 text-center text-xl leading-tight text-white ">
                             {t('questionForm.cardFormTitle')}
                         </h5>
                         <p className="mb-4 text-center text-neutral-800">
                             {t('questionForm.cardFormText')}                        
                         </p>
-                         <button onClick={handleButtonClick} className="rounded-md bg-[#f2daf8] mb-5 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{t('buttons.openForm')}</button>
-                         
-                         {modalOpen && (
+                        
+                         {!modalOpen ? (<div className="flex items-center justify-center">
+                         <button onClick={handleButtonClick} className="rounded-md bg-[#72569c] mb-5 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{t('buttons.openForm')}</button>
+                         </div>):(
                           
                           <form>
                           <div className="relative mb-6" data-te-input-wrapper-init>

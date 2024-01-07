@@ -9,7 +9,7 @@ const SwapField = React.forwardRef(({ obj }, inputRef) => {
       <input
       id={id}
         ref={inputRef}
-        className={getInputClassname()}
+        className={' w-full outline-none h-8 px-2 appearance-none text-3xl bg-transparent'}
         type={'number'}
         value={value}
         placeholder={'0.0'}
@@ -19,19 +19,16 @@ const SwapField = React.forwardRef(({ obj }, inputRef) => {
       />
 
       <Selector
-        
-        
         defaultValue={defaultValue}
-        ignoreValue={ignoreValue}setToken={setToken}id={id}
+        ignoreValue={ignoreValue}
+        setToken={setToken}
+        id={id}
+        className={'ml-25'}
       />
     </div>
   )
 
-  function getInputClassname() {
-    let className =
-      ' w-full outline-none h-8 px-2 appearance-none text-3xl bg-transparent'
-    return className
-  }
+  
 })
 
 export default SwapField
