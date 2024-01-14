@@ -49,10 +49,12 @@ export const SwapComponent = ({children}) => {
 
   const isReversed = useRef(false)
 
-  const INCREASE_ALLOWANCE = 'Increase allowance'
-  const ENTER_AMOUNT = 'Enter an amount'
-  const CONNECT_WALLET = 'Connect wallet'
-  const SWAP = 'Swap'
+  const INCREASE_ALLOWANCE = 'system.increaseAllowance'
+const ENTER_AMOUNT = 'system.enterAmount'
+const CONNECT_WALLET = 'system.connectAWallet'
+const SWAP = 'system.swap'
+
+const { t, i18n } = useTranslation();
 
   const srcTokenObj = {
     id: 'srcToken',
@@ -117,7 +119,6 @@ export const SwapComponent = ({children}) => {
     if (isReversed.current) isReversed.current = false
   }, [outputValue, srcToken])
 
-  const { t, i18n } = useTranslation();
 
   return (
     <ConnectToChartContext.Provider value={{srcToken, destToken}}>
@@ -158,7 +159,7 @@ export const SwapComponent = ({children}) => {
           else if (swapBtnText === SWAP) handleSwap()
         }}
       >
-        {swapBtnText}
+        {t(swapBtnText)}
       </button>
       
 

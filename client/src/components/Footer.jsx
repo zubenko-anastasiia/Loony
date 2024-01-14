@@ -27,11 +27,11 @@ const Footer=()=> {
           <li>
             <Typography
               as="a"
-              href="#"
+              href="https://github.com/zubenko-anastasiia/Loony"
               color="white"
               className="font-normal transition-colors hover:text-purple-500 focus:text-blue-500"
             >
-              {t('footer.license')}
+              GitHub
             </Typography>
           </li>
           

@@ -1,6 +1,5 @@
 import { Fragment, useRef, useState } from 'react'
 
-//import { Loading } from '@nextui-org/react'
 
 import { Dialog, Transition } from '@headlessui/react'
 
@@ -31,7 +30,6 @@ export default function TransactionStatus({}) {
             <Dialog.Overlay className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity' />
           </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
           <span
             className='hidden sm:inline-block sm:align-middle sm:h-screen'
             aria-hidden='true'
@@ -48,9 +46,7 @@ export default function TransactionStatus({}) {
             leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
           >
             <div className='status inline-block align-bottom py-6 bg-white border rounded-lg text-center overflow-hidden shadow-xl transform transition-all md:w-[35%] sm:my-8 sm:align-middle sm:max-w-lg sm:w-full'>
-              <div className='px-4 py-4 items-center justify-center sm:px-6 sm:flex sm:flex-row-reverse'>
-                {/* <Loading>Completing the transaction</Loading>  */}
-              </div>
+              
 
               <p className='px-4 py-4 text-black items-center text-sm justify-center sm:px-6 sm:flex sm:flex-row-reverse'>
                 (Would usually take &lt; 10 secs...)
