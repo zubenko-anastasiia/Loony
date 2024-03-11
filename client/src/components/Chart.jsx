@@ -1,12 +1,11 @@
 
 import React, { useEffect, useRef, useContext } from 'react';
-import {ConnectToChartContext} from "../pages/Convert"
 
 let tvScriptLoadingPromise;
 
-export default function TradingViewWidget() {
+export default function TradingViewWidget({ srcToken, destToken }) {
   const onLoadScriptRef = useRef();
-  const {srcToken, destToken} = useContext(ConnectToChartContext);
+  
 
   
   useEffect(
@@ -29,17 +28,51 @@ export default function TradingViewWidget() {
 
       return () => onLoadScriptRef.current = null;
 
-      function createWidget(srcToken, destToken) {
-       
-        let Token1="BYBIT:ETHUSDT";
-        if(srcToken=="ETH" && destToken =="BTC")
-        Token1 = "BYBIT:ETHBTC";
+      function createWidget() {
+        // let symbol = 'BYBIT:ETHUSDT'; 
+
+        // if (srcToken === 'ETH' && destToken === 'BTC' ) {
+        //   symbol = 'BYBIT:ETHBTC'; 
+        // } 
+        // else if (srcToken === 'ETH' && destToken === 'USDT') {
+        //   symbol = 'BYBIT:ETHUSDT'; 
+        // } 
+        // else if (srcToken === 'BTC' && destToken === 'USDT') {
+        //   symbol = 'BYBIT:BTCUSDT'; 
+        // } 
+        let symbol;
+
+        switch (true) {
+          case (srcToken === 'ETH' && destToken === 'BTC') || (srcToken === 'BTC' && destToken === 'ETH'):
+            symbol = 'BYBIT:ETHBTC';
+            break;
+          case (srcToken === 'ETH' && destToken === 'USDT') || (srcToken === 'USDT' && destToken === 'ETH'):
+            symbol = 'BYBIT:ETHUSDT';
+            break;
+          case (srcToken === 'BTC' && destToken === 'USDT') || (srcToken === 'USDT' && destToken === 'BTC'):
+            symbol = 'BYBIT:BTCUSDT';
+            break;
+          case (srcToken === 'LINK' && destToken === 'USDT') || (srcToken === 'USDT' && destToken === 'LINK'):
+              symbol = 'BYBIT:LINKUSDT';
+              break;
+          case (srcToken === 'LINK' && destToken === 'ETH') || (srcToken === 'ETH' && destToken === 'LINK'):
+              symbol = 'OKX:LINKETH';
+              break;
+          case (srcToken === 'LINK' && destToken === 'BTC') || (srcToken === 'BTC' && destToken === 'LINK'):
+              symbol = 'OKX:LINKBTC';
+              break;
+          default:
+            symbol = 'BYBIT:ETHUSDT'
+            break;
+        }
+
+        
 
         if (document.getElementById('tradingview_78993') && 'TradingView' in window) {
           new window.TradingView.widget({
             width: "700",
             height: "400",
-            symbol: Token1,//"BYBIT:ETHBTC"  "BYBIT:ETHUSDT" "BYBIT:BTCUSDT"
+            symbol: symbol,
             interval: "D",
             timezone: "Etc/UTC",
             theme: "light",
@@ -53,14 +86,17 @@ export default function TradingViewWidget() {
         }
       }
     },
-    []
+    [srcToken, destToken]
   );
 
   return (
     <div className='tradingview-widget-container' style={{ height: "100%", width: "100%" }}>
       <div id='tradingview_78993' style={{ height: "calc(100% - 32px)", width: "100%" }} />
       <div className="tradingview-widget-copyright">
-        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span className="blue-text"></span></a>
+        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+          <span className="blue-text">
+          </span>
+        </a>
       </div>
     </div>
   );

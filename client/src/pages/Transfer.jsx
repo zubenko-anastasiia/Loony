@@ -56,7 +56,7 @@ const Input = ({placeholder,name,type,value, handleChange, required}) =>(
               <div className="w-full px-4 mb-10 lg:w-1/2 lg:mb-0"> */}
                 
             <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-              <div className=" justify-center text-center font-bold text-2xl text-gray-700"> {t('system.transfer')}</div>
+              <div className=" justify-center text-center font-bold text-2xl text-white"> {t('system.transfer')}</div>
               <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={handleChange} placeholder-white/>
                 <Input className="placeholder-white" placeholder="Кількість (ETH)" name="amount" type="number" handleChange={handleChange}/>
                 <Input className="placeholder-white" placeholder="Повідомлення" name="message" type="text" handleChange={handleChange}/>
@@ -65,7 +65,7 @@ const Input = ({placeholder,name,type,value, handleChange, required}) =>(
                                 <button
                                 type="button"
                                 onClick={connectWallet}
-                                className="text-white w-full mt-2 border-[1px] p-2 border-[#be8defd5] rounded-full cursor-pointer  hover:bg-[#be8defd5] header-glassmorphism">
+                                className="text-white w-full mt-2  p-2 bg-[#72569c] rounded-full cursor-pointer  hover:bg-[#be8defd5] ">
                                     {t('system.connectAWallet')}
                                 </button>
                             ) : (

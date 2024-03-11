@@ -7,7 +7,14 @@
       "transfer":"Transfer",
       "exchange":"Convert",
       "support":"Support",
-      "connectAWallet":"Connect Wallet"
+      "connectAWallet":"Connect Wallet",
+      "increaseAllowance":"Increase allowance",
+      "enterAmount":"Enter an amount",
+      "swap":"Swap"
+    },
+    "aboutUs":{
+      "title":"Welcome to my cryptocurrency exchange platform!",
+      "subtitle":"Hello, I'm Anastasiia Zubenko, and this is my personal initiative to create a simple and accessible way to exchange cryptocurrency. I aim to share my first experience in this exciting field and build a user-friendly environment for those who want to join the world of cryptocurrencies.While I'm not an expert in blockchain or finance, I am confident that cryptocurrency opens up new possibilities for all of us. My website is an attempt to make this exciting world more accessible for beginners, like myself.Here, you will find a straightforward and understandable interface for cryptocurrency exchange. I understand that this may be your first attempt, so I strive to make the process as simple and secure as possible. Your comfort and confidence are crucial to me.I am always open to your questions and suggestions. Thank you for choosing my cryptocurrency exchange service. Join our community, and together, we take the first steps into the world of cryptocurrencies."
     },
     "welcome":{
       "opening":"Send a cryptocurrency  from every part of the world",

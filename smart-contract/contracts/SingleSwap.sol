@@ -21,10 +21,10 @@ contract SingleSwap {
 
     address public constant LINK = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB;
     address public constant WETH = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
+    
 
     IERC20 public linkToken = IERC20(LINK);
 
-    // For this example, we will set the pool fee to 0.3%.
     uint24 public constant poolFee = 3000;
 
     constructor() {}
@@ -76,3 +76,4 @@ contract SingleSwap {
         }
     }
 }
+//0xDE6697bB2976796850AFBF5584D813182612943A

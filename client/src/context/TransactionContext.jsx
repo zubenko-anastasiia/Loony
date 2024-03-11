@@ -63,7 +63,15 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 ////////////////////////////////////////////////////////////////////////////////////////
-
+const disconnectWallet = async () => {
+  try {
+      setCurrentAccount(null);
+      window.location.reload(); 
+  } catch (error) {
+      console.log(error);
+      throw new Error("Error disconnecting wallet");
+  }
+};
 ////////////////////////////////////////////////////////////////////////////////////////
   const sendTransaction = async () => {
     try {
@@ -118,6 +126,7 @@ export const TransactionsProvider = ({ children }) => {
         sendTransaction,
         handleChange,
         formData,
+        disconnectWallet
       }}
     >
       {children}

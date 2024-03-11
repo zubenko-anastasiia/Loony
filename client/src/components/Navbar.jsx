@@ -26,7 +26,7 @@ const locales = {
 
 const Navbar = () => {
 const [toggleMenu, setToggleMenu] = React.useState(false);
-const {connectWallet,currentAccount} = useContext(TransactionContext);
+const {connectWallet,currentAccount, disconnectWallet} = useContext(TransactionContext);
 
 const { t, i18n } = useTranslation();
   return (
@@ -59,13 +59,13 @@ const { t, i18n } = useTranslation();
 
             <div>
             {!currentAccount ?(
-              <button type="button" onClick={connectWallet} className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#2546bd]">
+              <button type="button" onClick={connectWallet} className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#be8defd5]">
                {t('system.connectAWallet')}
               </button>
             ):(
-              <div className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer">
+              <button type="button" onClick={disconnectWallet} className="bg-[#72569c] py-2 px-7 mx-4 text-white rounded-full cursor-pointer hover:bg-[#be8defd5]">
                 {shortenAddress(currentAccount)}
-              </div>
+              </button>
             )}
             </div>
 

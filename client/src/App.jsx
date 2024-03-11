@@ -7,6 +7,7 @@ import {BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { Navbar, Welcome, Footer, Convert, Transfer, Support, Github, ErrorPage, AboutUs } from "./components/index";
 
+
 function App() {
   const { t, i18n } = useTranslation();
   return (
@@ -20,6 +21,7 @@ function App() {
                   <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/convert" element={<Convert />} />
+            {/* <Route path="/convert" element={<Exchange />} /> */}
             <Route path="/transfer" element={<Transfer />} />
             <Route path="/support" element={<Support />} />
             <Route path="/Github" element={<Github />} />

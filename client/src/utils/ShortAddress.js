@@ -1,3 +1,10 @@
-export const shortenAddress = (address) => `${address.slice(0, 4)}...${address.slice(address.length - 7)}`;
+export const shortenAddress = (address) => {
+    if (!address) return ''; 
+    return `${address.slice(0, 4)}...${address.slice(address.length - 7)}`;
+  };
 
-export const currentAddress = (address) => `${address}`;
+export const currentAddress = (address) =>{
+    if (!address) return ''; 
+    return `${address}`;
+    
+} 
