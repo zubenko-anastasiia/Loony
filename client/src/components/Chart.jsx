@@ -29,17 +29,6 @@ export default function TradingViewWidget({ srcToken, destToken }) {
       return () => onLoadScriptRef.current = null;
 
       function createWidget() {
-        // let symbol = 'BYBIT:ETHUSDT'; 
-
-        // if (srcToken === 'ETH' && destToken === 'BTC' ) {
-        //   symbol = 'BYBIT:ETHBTC'; 
-        // } 
-        // else if (srcToken === 'ETH' && destToken === 'USDT') {
-        //   symbol = 'BYBIT:ETHUSDT'; 
-        // } 
-        // else if (srcToken === 'BTC' && destToken === 'USDT') {
-        //   symbol = 'BYBIT:BTCUSDT'; 
-        // } 
         let symbol;
 
         switch (true) {

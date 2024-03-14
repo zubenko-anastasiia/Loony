@@ -8,6 +8,7 @@ export const TransactionContext = React.createContext();
 
 const { ethereum } = window;
 
+
 const createEthereumTransactionContract = () => {
   const provider = new ethers.providers.Web3Provider(ethereum);
   const signer = provider.getSigner();
@@ -15,6 +16,7 @@ const createEthereumTransactionContract = () => {
 
   return transactionsContract;
 };
+
 const createEthereumBalanceContract = async () => {
   const provider = new ethers.providers.Web3Provider(ethereum);
   await provider.send("eth_requestAccounts", []);
@@ -24,6 +26,9 @@ const createEthereumBalanceContract = async () => {
 
   return balanceContract;
 };
+
+
+
 export const TransactionsProvider = ({ children }) => {
 
   const [formData, setformData] = useState({ addressTo: "", amount: "",message: "" });
@@ -37,6 +42,7 @@ export const TransactionsProvider = ({ children }) => {
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
+    fetchBalances();
   };
 
   
@@ -44,16 +50,13 @@ export const TransactionsProvider = ({ children }) => {
   const checkIfWalletIsConnect = async () => {
     try {
       if (!ethereum) return alert("Please install MetaMask.");
-
+      if (currentAccount!=null){
       const accounts = await ethereum.request({ method: "eth_accounts" });
-
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-
-        
       } else {
         console.log("No accounts found");
-      }
+      }}
     } catch (error) {
       console.log(error);
     }
@@ -70,11 +73,9 @@ export const TransactionsProvider = ({ children }) => {
       setCurrentAccount(accounts[0]);
       
       window.location.reload();
-      const balanceContract = createEthereumBalanceContract();
-        const initialWETHBalance = await balanceContract.getWETHBalanceClient();
-        const ititialLINKBalance = await balanceContract.getLINKBalanceClient();
-        setWETHBalance(initialWETHBalance.toString());
-        setLinkBalance(ititialLINKBalance.toString());
+
+      fetchBalances();
+
     } catch (error) {
       console.log(error);
 
@@ -84,8 +85,8 @@ export const TransactionsProvider = ({ children }) => {
 ////////////////////////////////////////////////////////////////////////////////////////
 const disconnectWallet = async () => {
   try {
-      setCurrentAccount(null);
-      window.location.reload(); 
+      
+       setCurrentAccount(null);
   } catch (error) {
       console.log(error);
       throw new Error("Error disconnecting wallet");
@@ -132,10 +133,10 @@ const disconnectWallet = async () => {
   useEffect(() => {
     checkIfWalletIsConnect();
     
+    
   });
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////BALANCES/////////////////////////////////////////////////
-useEffect(() => {
   const fetchBalances = async () => {
     try {
       if (ethereum) {
@@ -150,12 +151,8 @@ useEffect(() => {
     }
   };
 
-  fetchBalances();
-}, []);
-
   
-
-  return (
+return (
     <TransactionContext.Provider
       value={{
         connectWallet,

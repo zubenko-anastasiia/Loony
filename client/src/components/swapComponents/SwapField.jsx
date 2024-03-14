@@ -4,8 +4,6 @@ import Selector from './SwapSelector'
 
 const SwapField = React.forwardRef(({ obj }, inputRef) => {
   const { id, value = '', setValue, defaultValue, setToken, ignoreValue } = obj
-
-
   const handleChange = (e) => {
     const newValue = e.target.value;
     setValue(newValue);

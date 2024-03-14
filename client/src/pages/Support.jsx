@@ -145,14 +145,10 @@ const Support =()=>{
                 </div>
 
             </div>
-    
-        
-      
      </div>
   </section>
   
 </div>
-    );
-  }
+);}
   
   export default Support;

@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, {useContext} from "react";
 
-import {ArrowSmDownIcon } from '@heroicons/react/outline'
-
 import { TransactionContext } from '../context/TransactionContext';
 
 
@@ -23,9 +21,7 @@ const Input = ({placeholder,name,type,value, handleChange, required}) =>(
   };
 
   const Transfer =()=>{
-    const {transactionCount,
-        connectWallet,
-        transactions,
+    const {connectWallet,
         currentAccount,
         isLoading,
         setIsLoading,
@@ -49,13 +45,7 @@ const Input = ({placeholder,name,type,value, handleChange, required}) =>(
       <div className="flex w-full h-screen justify-center items-center">
         <div className="flex items-center justify-between md:p-20 py-12 px-4">
           
-            <div className="flex flex-col flex-1 items-center justify-start w-f mf:mt-0 mt-10">
-           
-      {/* <section className="flex items-center  xl:h-screen font-poppins ">
-      <div className="justify-center flex-1 max-w-6xl py-4 mx-auto lg:py-6 md:px-6">
-          <div className="flex flex-wrap ">
-              <div className="w-full px-4 mb-10 lg:w-1/2 lg:mb-0"> */}
-                
+          <div className="flex flex-col flex-1 items-center justify-start w-f mf:mt-0 mt-10">
             <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
               <div className=" justify-center text-center font-bold text-2xl text-white"> {t('system.transfer')}</div>
               <Input className="placeholder-white" placeholder="Отримувач" name="addressTo" type="text" handleChange={handleChange} placeholder-white/>
@@ -95,9 +85,9 @@ const Input = ({placeholder,name,type,value, handleChange, required}) =>(
                             )}
                  </div>
             </div>
-            </div>
+          </div>
             
-            </div>
+        </div>
     
     );
   }
