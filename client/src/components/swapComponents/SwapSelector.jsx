@@ -30,13 +30,14 @@ const Selector = ({ defaultValue, ignoreValue, setToken, id }) => {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button>
+        <Button className='text-gray-200'>
           {selectedItem}
         </Button>
       </DropdownTrigger>
 
       <DropdownMenu
         aria-label='Dynamic Actions'
+        className='backdrop-blur-lg bg-opacity-20'
         items={menuItems}
         onAction={key => {
           setSelectedItem(key);
@@ -47,7 +48,7 @@ const Selector = ({ defaultValue, ignoreValue, setToken, id }) => {
           <DropdownItem
             aria-label={id}
             key={item.key}
-            color={item.key === 'delete' ? 'error' : 'default'}
+            className='text-white'
             name={item.key}
           >
             {item.name}

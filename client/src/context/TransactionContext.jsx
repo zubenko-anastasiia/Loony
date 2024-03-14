@@ -2,25 +2,38 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 import { transactionsABI, transactionsAddress } from "../utils/constantsTransaction";
+import { getBalanceABI, getBalanceAddress } from "../utils/constantsBalance";
 
 export const TransactionContext = React.createContext();
 
 const { ethereum } = window;
 
-const createEthereumContract = () => {
+const createEthereumTransactionContract = () => {
   const provider = new ethers.providers.Web3Provider(ethereum);
   const signer = provider.getSigner();
   const transactionsContract = new ethers.Contract(transactionsAddress, transactionsABI, signer);
 
   return transactionsContract;
 };
+const createEthereumBalanceContract = async () => {
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  await provider.send("eth_requestAccounts", []);
 
+  const signer = provider.getSigner();
+  const balanceContract = new ethers.Contract(getBalanceAddress, getBalanceABI, signer);
+
+  return balanceContract;
+};
 export const TransactionsProvider = ({ children }) => {
 
   const [formData, setformData] = useState({ addressTo: "", amount: "",message: "" });
   const [currentAccount, setCurrentAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
+  const [wETHBalance, setWETHBalance] = useState();
+  const [linkBalance, setLinkBalance] = useState();
+  const [clientBalance, setClientBalance] = useState(0);
+
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
@@ -55,7 +68,13 @@ export const TransactionsProvider = ({ children }) => {
       const accounts = await ethereum.request({ method: "eth_requestAccounts", });
 
       setCurrentAccount(accounts[0]);
+      
       window.location.reload();
+      const balanceContract = createEthereumBalanceContract();
+        const initialWETHBalance = await balanceContract.getWETHBalanceClient();
+        const ititialLINKBalance = await balanceContract.getLINKBalanceClient();
+        setWETHBalance(initialWETHBalance.toString());
+        setLinkBalance(ititialLINKBalance.toString());
     } catch (error) {
       console.log(error);
 
@@ -77,7 +96,7 @@ const disconnectWallet = async () => {
     try {
       if (ethereum) {
         const { addressTo, amount,message } = formData;
-        const transactionsContract = createEthereumContract();
+        const transactionsContract = createEthereumTransactionContract();
         const parsedAmount = ethers.utils.parseEther(amount);
 
         await ethereum.request({
@@ -115,6 +134,26 @@ const disconnectWallet = async () => {
     
   });
 ////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////BALANCES/////////////////////////////////////////////////
+useEffect(() => {
+  const fetchBalances = async () => {
+    try {
+      if (ethereum) {
+        const balanceContract = createEthereumBalanceContract();
+        const initialWETHBalance = await balanceContract.getWETHBalanceClient();
+        const initialLINKBalance = await balanceContract.getLINKBalanceClient();
+        setWETHBalance(initialWETHBalance.toString());
+        setLinkBalance(initialLINKBalance.toString());
+      }
+    } catch (error) {
+      console.error('Error fetching balances:', error.message);
+    }
+  };
+
+  fetchBalances();
+}, []);
+
+  
 
   return (
     <TransactionContext.Provider
@@ -123,10 +162,14 @@ const disconnectWallet = async () => {
         transactions,
         currentAccount,
         isLoading,
+        setIsLoading,
         sendTransaction,
         handleChange,
         formData,
-        disconnectWallet
+        disconnectWallet,
+        wETHBalance,
+        linkBalance,
+        clientBalance
       }}
     >
       {children}

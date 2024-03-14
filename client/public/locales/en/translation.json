@@ -10,7 +10,8 @@
       "connectAWallet":"Connect Wallet",
       "increaseAllowance":"Increase allowance",
       "enterAmount":"Enter an amount",
-      "swap":"Swap"
+      "swap":"Swap",
+      "balance":"Balance:"
     },
     "aboutUs":{
       "title":"Welcome to my cryptocurrency exchange platform!",
