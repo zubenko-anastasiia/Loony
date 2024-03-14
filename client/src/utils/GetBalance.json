@@ -1,0 +1,1773 @@
+{
+	"compilerInput": "{\"language\":\"Solidity\",\"sources\":{\"contracts/GetBalance.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-2.0-or-later\\r\\npragma solidity =0.7.6;\\r\\npragma abicoder v2;\\r\\n\\r\\nimport \\\"https://github.com/Uniswap/v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol\\\";\\r\\n\\r\\ninterface IERC20 {\\r\\n    function balanceOf(address account) external view returns (uint256);\\r\\n\\r\\n    function approve(address spender, uint256 amount) external returns (bool);\\r\\n}\\r\\ncontract GetBalance {\\r\\n\\r\\n    address public constant LINK = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB;\\r\\n    address public constant WETH = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;\\r\\n    address public constant UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;\\r\\n    address public constant DAI = 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844;\\r\\n\\r\\n\\r\\n    IERC20 public wethToken = IERC20(WETH);\\r\\n    IERC20 public linkToken = IERC20(LINK);\\r\\n    IERC20 public uniToken = IERC20(UNI);\\r\\n    IERC20 public daiToken = IERC20(DAI);\\r\\n\\r\\n    function getWETHBalanceClient() external view returns (uint256) {\\r\\n            return IERC20(WETH).balanceOf(msg.sender);\\r\\n        }\\r\\n    function getLINKBalanceClient() external view returns (uint256) {\\r\\n            return IERC20(LINK).balanceOf(msg.sender);\\r\\n        }\\r\\n    function getUNIalanceClien() external view returns (uint256) {\\r\\n            return IERC20(UNI).balanceOf(msg.sender);\\r\\n        }\\r\\n    function getDAIBalanceClient() external view returns (uint256) {\\r\\n            return IERC20(DAI).balanceOf(msg.sender);\\r\\n        }\\r\\n    function getBalanceClient() external view returns (uint256){\\r\\n        return msg.sender.balance;\\r\\n    }\\r\\n}\"},\"https://github.com/Uniswap/v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-2.0-or-later\\npragma solidity >=0.7.5;\\npragma abicoder v2;\\n\\nimport '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol';\\n\\n/// @title Router token swapping functionality\\n/// @notice Functions for swapping tokens via Uniswap V3\\ninterface ISwapRouter is IUniswapV3SwapCallback {\\n    struct ExactInputSingleParams {\\n        address tokenIn;\\n        address tokenOut;\\n        uint24 fee;\\n        address recipient;\\n        uint256 deadline;\\n        uint256 amountIn;\\n        uint256 amountOutMinimum;\\n        uint160 sqrtPriceLimitX96;\\n    }\\n\\n    /// @notice Swaps `amountIn` of one token for as much as possible of another token\\n    /// @param params The parameters necessary for the swap, encoded as `ExactInputSingleParams` in calldata\\n    /// @return amountOut The amount of the received token\\n    function exactInputSingle(ExactInputSingleParams calldata params) external payable returns (uint256 amountOut);\\n\\n    struct ExactInputParams {\\n        bytes path;\\n        address recipient;\\n        uint256 deadline;\\n        uint256 amountIn;\\n        uint256 amountOutMinimum;\\n    }\\n\\n    /// @notice Swaps `amountIn` of one token for as much as possible of another along the specified path\\n    /// @param params The parameters necessary for the multi-hop swap, encoded as `ExactInputParams` in calldata\\n    /// @return amountOut The amount of the received token\\n    function exactInput(ExactInputParams calldata params) external payable returns (uint256 amountOut);\\n\\n    struct ExactOutputSingleParams {\\n        address tokenIn;\\n        address tokenOut;\\n        uint24 fee;\\n        address recipient;\\n        uint256 deadline;\\n        uint256 amountOut;\\n        uint256 amountInMaximum;\\n        uint160 sqrtPriceLimitX96;\\n    }\\n\\n    /// @notice Swaps as little as possible of one token for `amountOut` of another token\\n    /// @param params The parameters necessary for the swap, encoded as `ExactOutputSingleParams` in calldata\\n    /// @return amountIn The amount of the input token\\n    function exactOutputSingle(ExactOutputSingleParams calldata params) external payable returns (uint256 amountIn);\\n\\n    struct ExactOutputParams {\\n        bytes path;\\n        address recipient;\\n        uint256 deadline;\\n        uint256 amountOut;\\n        uint256 amountInMaximum;\\n    }\\n\\n    /// @notice Swaps as little as possible of one token for `amountOut` of another along the specified path (reversed)\\n    /// @param params The parameters necessary for the multi-hop swap, encoded as `ExactOutputParams` in calldata\\n    /// @return amountIn The amount of the input token\\n    function exactOutput(ExactOutputParams calldata params) external payable returns (uint256 amountIn);\\n}\\n\"},\"@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-2.0-or-later\\npragma solidity >=0.5.0;\\n\\n/// @title Callback for IUniswapV3PoolActions#swap\\n/// @notice Any contract that calls IUniswapV3PoolActions#swap must implement this interface\\ninterface IUniswapV3SwapCallback {\\n    /// @notice Called to `msg.sender` after executing a swap via IUniswapV3Pool#swap.\\n    /// @dev In the implementation you must pay the pool tokens owed for the swap.\\n    /// The caller of this method must be checked to be a UniswapV3Pool deployed by the canonical UniswapV3Factory.\\n    /// amount0Delta and amount1Delta can both be 0 if no tokens were swapped.\\n    /// @param amount0Delta The amount of token0 that was sent (negative) or must be received (positive) by the pool by\\n    /// the end of the swap. If positive, the callback must send that amount of token0 to the pool.\\n    /// @param amount1Delta The amount of token1 that was sent (negative) or must be received (positive) by the pool by\\n    /// the end of the swap. If positive, the callback must send that amount of token1 to the pool.\\n    /// @param data Any data passed through by the caller via the IUniswapV3PoolActions#swap call\\n    function uniswapV3SwapCallback(\\n        int256 amount0Delta,\\n        int256 amount1Delta,\\n        bytes calldata data\\n    ) external;\\n}\\n\"}},\"settings\":{\"optimizer\":{\"enabled\":false,\"runs\":200},\"outputSelection\":{\"*\":{\"\":[\"ast\"],\"*\":[\"abi\",\"metadata\",\"devdoc\",\"userdoc\",\"storageLayout\",\"evm.legacyAssembly\",\"evm.bytecode\",\"evm.deployedBytecode\",\"evm.methodIdentifiers\",\"evm.gasEstimates\",\"evm.assembly\"]}},\"remappings\":[]}}",
+	"name": "GetBalance",
+	"metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"DAI\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"LINK\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UNI\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daiToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDAIBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLINKBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUNIalanceClien\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getWETHBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"linkToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"wethToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/GetBalance.sol\":\"GetBalance\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol\":{\"keccak256\":\"0x3f485fb1a44e8fbeadefb5da07d66edab3cfe809f0ac4074b1e54e3eb3c4cf69\",\"license\":\"GPL-2.0-or-later\",\"urls\":[\"bzz-raw://095ce0626b41318c772b3ebf19d548282607f6a8f3d6c41c13edfbd5370c8652\",\"dweb:/ipfs/QmVDZfJJ89UUCE1hMyzqpkZAtQ8jUsBgZNE5AMRG7RzRFS\"]},\"contracts/GetBalance.sol\":{\"keccak256\":\"0x67bd7e3587b7253ff234e25917785bb5c4817ccb187c657cdadf0a8ddce4dd0f\",\"license\":\"GPL-2.0-or-later\",\"urls\":[\"bzz-raw://4f0479e5c768392982606202b5c8e136bcf5ef853b68b05f6923cc88617bc6ef\",\"dweb:/ipfs/QmczG9EUzmqpUzNPZytjrSPe6UVhHHmqpPquoawo1WLj3W\"]},\"https://github.com/Uniswap/v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol\":{\"keccak256\":\"0x9bfaf1feb32814623e627ab70f2409760b15d95f1f9b058e2b3399a8bb732975\",\"license\":\"GPL-2.0-or-later\",\"urls\":[\"bzz-raw://a8a2c3e55965b61bcd91993d8e1d5d34b8b8a63e0fdfce87a85f6af92526fd53\",\"dweb:/ipfs/QmQj2CSCSwqDSU4KMNWxGsN2336Cy64WgpV1X1EHXNZWxM\"]}},\"version\":1}",
+	"bytecode": {
+		"generatedSources": [],
+		"linkReferences": {},
+		"object": "608060405273b4fbf271143f4fbf7b91a5ded31805e42b2208d66000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555073326c977e6efc84e512bb9c30f76e30c160ed06fb600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550731f9840a85d5af5bf1d1762f925bdaddc4201f984600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507311fe4b6ae13d2a6055c8d9cf65c55bac32b5d844600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555034801561016357600080fd5b506107c8806101736000396000f3fe608060405234801561001057600080fd5b50600436106100cf5760003560e01c8063541bcb761161008c578063ad5c464811610066578063ad5c4648146101e2578063bd933a2b14610200578063be22f5461461021e578063e0bab4c41461023c576100cf565b8063541bcb761461018857806357970e93146101a657806385ce4fee146101c4576100cf565b80631b6b6d23146100d45780631c48ae73146100f25780632a3521b3146101105780632f041eb81461012e578063412c09921461014c5780634b57b0be1461016a575b600080fd5b6100dc61025a565b6040516100e99190610679565b60405180910390f35b6100fa610272565b60405161010791906106ca565b60405180910390f35b610118610291565b60405161012591906106ca565b60405180910390f35b610136610335565b60405161014391906106ca565b60405180910390f35b6101546103d9565b60405161016191906106ca565b60405180910390f35b61017261047d565b60405161017f91906106af565b60405180910390f35b6101906104a1565b60405161019d9190610679565b60405180910390f35b6101ae6104b9565b6040516101bb91906106af565b60405180910390f35b6101cc6104df565b6040516101d991906106af565b60405180910390f35b6101ea610505565b6040516101f79190610679565b60405180910390f35b61020861051d565b60405161021591906106ca565b60405180910390f35b6102266105c1565b60405161023391906106af565b60405180910390f35b6102446105e7565b6040516102519190610679565b60405180910390f35b73326c977e6efc84e512bb9c30f76e30c160ed06fb81565b60003373ffffffffffffffffffffffffffffffffffffffff1631905090565b6000731f9840a85d5af5bf1d1762f925bdaddc4201f98473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016102e09190610694565b60206040518083038186803b1580156102f857600080fd5b505afa15801561030c573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103309190610614565b905090565b600073b4fbf271143f4fbf7b91a5ded31805e42b2208d673ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016103849190610694565b60206040518083038186803b15801561039c57600080fd5b505afa1580156103b0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103d49190610614565b905090565b60007311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016104289190610694565b60206040518083038186803b15801561044057600080fd5b505afa158015610454573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104789190610614565b905090565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b731f9840a85d5af5bf1d1762f925bdaddc4201f98481565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b73b4fbf271143f4fbf7b91a5ded31805e42b2208d681565b600073326c977e6efc84e512bb9c30f76e30c160ed06fb73ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b815260040161056c9190610694565b60206040518083038186803b15801561058457600080fd5b505afa158015610598573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105bc9190610614565b905090565b600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b7311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84481565b60008151905061060e8161077b565b92915050565b60006020828403121561062657600080fd5b6000610634848285016105ff565b91505092915050565b61064681610721565b82525050565b610655816106e5565b82525050565b61066481610733565b82525050565b61067381610717565b82525050565b600060208201905061068e600083018461064c565b92915050565b60006020820190506106a9600083018461063d565b92915050565b60006020820190506106c4600083018461065b565b92915050565b60006020820190506106df600083018461066a565b92915050565b60006106f0826106f7565b9050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600061072c82610757565b9050919050565b600061073e82610745565b9050919050565b6000610750826106f7565b9050919050565b600061076282610769565b9050919050565b6000610774826106f7565b9050919050565b61078481610717565b811461078f57600080fd5b5056fea264697066735822122027e9e260de401b2ab5cd856dbe0ab521f84393c57ff3f72b0cfb0cec7696ed0d64736f6c63430007060033",
+		"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE PUSH20 0xB4FBF271143F4FBF7B91A5DED31805E42B2208D6 PUSH1 0x0 DUP1 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP PUSH20 0x326C977E6EFC84E512BB9C30F76E30C160ED06FB PUSH1 0x1 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP PUSH20 0x1F9840A85D5AF5BF1D1762F925BDADDC4201F984 PUSH1 0x2 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP PUSH20 0x11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844 PUSH1 0x3 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP CALLVALUE DUP1 ISZERO PUSH2 0x163 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x7C8 DUP1 PUSH2 0x173 PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN INVALID PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0xCF JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x541BCB76 GT PUSH2 0x8C JUMPI DUP1 PUSH4 0xAD5C4648 GT PUSH2 0x66 JUMPI DUP1 PUSH4 0xAD5C4648 EQ PUSH2 0x1E2 JUMPI DUP1 PUSH4 0xBD933A2B EQ PUSH2 0x200 JUMPI DUP1 PUSH4 0xBE22F546 EQ PUSH2 0x21E JUMPI DUP1 PUSH4 0xE0BAB4C4 EQ PUSH2 0x23C JUMPI PUSH2 0xCF JUMP JUMPDEST DUP1 PUSH4 0x541BCB76 EQ PUSH2 0x188 JUMPI DUP1 PUSH4 0x57970E93 EQ PUSH2 0x1A6 JUMPI DUP1 PUSH4 0x85CE4FEE EQ PUSH2 0x1C4 JUMPI PUSH2 0xCF JUMP JUMPDEST DUP1 PUSH4 0x1B6B6D23 EQ PUSH2 0xD4 JUMPI DUP1 PUSH4 0x1C48AE73 EQ PUSH2 0xF2 JUMPI DUP1 PUSH4 0x2A3521B3 EQ PUSH2 0x110 JUMPI DUP1 PUSH4 0x2F041EB8 EQ PUSH2 0x12E JUMPI DUP1 PUSH4 0x412C0992 EQ PUSH2 0x14C JUMPI DUP1 PUSH4 0x4B57B0BE EQ PUSH2 0x16A JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH2 0xDC PUSH2 0x25A JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0xE9 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0xFA PUSH2 0x272 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x107 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x118 PUSH2 0x291 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x125 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x136 PUSH2 0x335 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x143 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x154 PUSH2 0x3D9 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x161 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x172 PUSH2 0x47D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x17F SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x190 PUSH2 0x4A1 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x19D SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1AE PUSH2 0x4B9 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1BB SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1CC PUSH2 0x4DF JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1D9 SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1EA PUSH2 0x505 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1F7 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x208 PUSH2 0x51D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x215 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x226 PUSH2 0x5C1 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x233 SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x244 PUSH2 0x5E7 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x251 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH20 0x326C977E6EFC84E512BB9C30F76E30C160ED06FB DUP2 JUMP JUMPDEST PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND BALANCE SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x1F9840A85D5AF5BF1D1762F925BDADDC4201F984 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x2E0 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x2F8 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x30C JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x330 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0xB4FBF271143F4FBF7B91A5DED31805E42B2208D6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x384 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x39C JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x3B0 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x3D4 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x428 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x440 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x454 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x478 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 DUP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0x1F9840A85D5AF5BF1D1762F925BDADDC4201F984 DUP2 JUMP JUMPDEST PUSH1 0x1 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH1 0x2 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0xB4FBF271143F4FBF7B91A5DED31805E42B2208D6 DUP2 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x326C977E6EFC84E512BB9C30F76E30C160ED06FB PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x56C SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x584 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x598 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x5BC SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0x11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844 DUP2 JUMP JUMPDEST PUSH1 0x0 DUP2 MLOAD SWAP1 POP PUSH2 0x60E DUP2 PUSH2 0x77B JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 DUP5 SUB SLT ISZERO PUSH2 0x626 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x0 PUSH2 0x634 DUP5 DUP3 DUP6 ADD PUSH2 0x5FF JUMP JUMPDEST SWAP2 POP POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH2 0x646 DUP2 PUSH2 0x721 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x655 DUP2 PUSH2 0x6E5 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x664 DUP2 PUSH2 0x733 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x673 DUP2 PUSH2 0x717 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x68E PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x64C JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6A9 PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x63D JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6C4 PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x65B JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6DF PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x66A JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x6F0 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF DUP3 AND SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 DUP2 SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x72C DUP3 PUSH2 0x757 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x73E DUP3 PUSH2 0x745 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x750 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x762 DUP3 PUSH2 0x769 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x774 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH2 0x784 DUP2 PUSH2 0x717 JUMP JUMPDEST DUP2 EQ PUSH2 0x78F JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0x27 0xE9 0xE2 PUSH1 0xDE BLOCKHASH SHL 0x2A 0xB5 0xCD DUP6 PUSH14 0xBE0AB521F84393C57FF3F72B0CFB 0xC 0xEC PUSH23 0x96ED0D64736F6C63430007060033000000000000000000 ",
+		"sourceMap": "373:1181:1:-:0;;;513:42;724:38;;;;;;;;;;;;;;;;;;;;433:42;769:38;;;;;;;;;;;;;;;;;;;;592:42;814:36;;;;;;;;;;;;;;;;;;;;671:42;857:36;;;;;;;;;;;;;;;;;;;;373:1181;;;;;;;;;;;;;;;;"
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "DAI",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "LINK",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "UNI",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "WETH",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "daiToken",
+			"outputs": [
+				{
+					"internalType": "contract IERC20",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getBalanceClient",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getDAIBalanceClient",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getLINKBalanceClient",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getUNIalanceClien",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getWETHBalanceClient",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "linkToken",
+			"outputs": [
+				{
+					"internalType": "contract IERC20",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "uniToken",
+			"outputs": [
+				{
+					"internalType": "contract IERC20",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "wethToken",
+			"outputs": [
+				{
+					"internalType": "contract IERC20",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"storageLayout": {
+		"storage": [
+			{
+				"astId": 51,
+				"contract": "contracts/GetBalance.sol:GetBalance",
+				"label": "wethToken",
+				"offset": 0,
+				"slot": "0",
+				"type": "t_contract(IERC20)34"
+			},
+			{
+				"astId": 56,
+				"contract": "contracts/GetBalance.sol:GetBalance",
+				"label": "linkToken",
+				"offset": 0,
+				"slot": "1",
+				"type": "t_contract(IERC20)34"
+			},
+			{
+				"astId": 61,
+				"contract": "contracts/GetBalance.sol:GetBalance",
+				"label": "uniToken",
+				"offset": 0,
+				"slot": "2",
+				"type": "t_contract(IERC20)34"
+			},
+			{
+				"astId": 66,
+				"contract": "contracts/GetBalance.sol:GetBalance",
+				"label": "daiToken",
+				"offset": 0,
+				"slot": "3",
+				"type": "t_contract(IERC20)34"
+			}
+		],
+		"types": {
+			"t_contract(IERC20)34": {
+				"encoding": "inplace",
+				"label": "contract IERC20",
+				"numberOfBytes": "20"
+			}
+		}
+	},
+	"web3Deploy": "var getbalanceContract = new web3.eth.Contract([{\"inputs\":[],\"name\":\"DAI\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"LINK\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"UNI\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"daiToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDAIBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getLINKBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getUNIalanceClien\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getWETHBalanceClient\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"linkToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uniToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"wethToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]);\nvar getbalance = getbalanceContract.deploy({\n     data: '0x608060405273b4fbf271143f4fbf7b91a5ded31805e42b2208d66000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555073326c977e6efc84e512bb9c30f76e30c160ed06fb600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550731f9840a85d5af5bf1d1762f925bdaddc4201f984600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507311fe4b6ae13d2a6055c8d9cf65c55bac32b5d844600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555034801561016357600080fd5b506107c8806101736000396000f3fe608060405234801561001057600080fd5b50600436106100cf5760003560e01c8063541bcb761161008c578063ad5c464811610066578063ad5c4648146101e2578063bd933a2b14610200578063be22f5461461021e578063e0bab4c41461023c576100cf565b8063541bcb761461018857806357970e93146101a657806385ce4fee146101c4576100cf565b80631b6b6d23146100d45780631c48ae73146100f25780632a3521b3146101105780632f041eb81461012e578063412c09921461014c5780634b57b0be1461016a575b600080fd5b6100dc61025a565b6040516100e99190610679565b60405180910390f35b6100fa610272565b60405161010791906106ca565b60405180910390f35b610118610291565b60405161012591906106ca565b60405180910390f35b610136610335565b60405161014391906106ca565b60405180910390f35b6101546103d9565b60405161016191906106ca565b60405180910390f35b61017261047d565b60405161017f91906106af565b60405180910390f35b6101906104a1565b60405161019d9190610679565b60405180910390f35b6101ae6104b9565b6040516101bb91906106af565b60405180910390f35b6101cc6104df565b6040516101d991906106af565b60405180910390f35b6101ea610505565b6040516101f79190610679565b60405180910390f35b61020861051d565b60405161021591906106ca565b60405180910390f35b6102266105c1565b60405161023391906106af565b60405180910390f35b6102446105e7565b6040516102519190610679565b60405180910390f35b73326c977e6efc84e512bb9c30f76e30c160ed06fb81565b60003373ffffffffffffffffffffffffffffffffffffffff1631905090565b6000731f9840a85d5af5bf1d1762f925bdaddc4201f98473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016102e09190610694565b60206040518083038186803b1580156102f857600080fd5b505afa15801561030c573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103309190610614565b905090565b600073b4fbf271143f4fbf7b91a5ded31805e42b2208d673ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016103849190610694565b60206040518083038186803b15801561039c57600080fd5b505afa1580156103b0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103d49190610614565b905090565b60007311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016104289190610694565b60206040518083038186803b15801561044057600080fd5b505afa158015610454573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104789190610614565b905090565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b731f9840a85d5af5bf1d1762f925bdaddc4201f98481565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b73b4fbf271143f4fbf7b91a5ded31805e42b2208d681565b600073326c977e6efc84e512bb9c30f76e30c160ed06fb73ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b815260040161056c9190610694565b60206040518083038186803b15801561058457600080fd5b505afa158015610598573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105bc9190610614565b905090565b600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b7311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84481565b60008151905061060e8161077b565b92915050565b60006020828403121561062657600080fd5b6000610634848285016105ff565b91505092915050565b61064681610721565b82525050565b610655816106e5565b82525050565b61066481610733565b82525050565b61067381610717565b82525050565b600060208201905061068e600083018461064c565b92915050565b60006020820190506106a9600083018461063d565b92915050565b60006020820190506106c4600083018461065b565b92915050565b60006020820190506106df600083018461066a565b92915050565b60006106f0826106f7565b9050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600061072c82610757565b9050919050565b600061073e82610745565b9050919050565b6000610750826106f7565b9050919050565b600061076282610769565b9050919050565b6000610774826106f7565b9050919050565b61078481610717565b811461078f57600080fd5b5056fea264697066735822122027e9e260de401b2ab5cd856dbe0ab521f84393c57ff3f72b0cfb0cec7696ed0d64736f6c63430007060033', \n     arguments: [\n     ]\n}).send({\n     from: web3.eth.accounts[0], \n     gas: '4700000'\n   }, function (e, contract){\n    console.log(e, contract);\n    if (typeof contract.address !== 'undefined') {\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);\n    }\n })",
+	"functionHashes": {
+		"e0bab4c4": "DAI()",
+		"1b6b6d23": "LINK()",
+		"541bcb76": "UNI()",
+		"ad5c4648": "WETH()",
+		"be22f546": "daiToken()",
+		"1c48ae73": "getBalanceClient()",
+		"412c0992": "getDAIBalanceClient()",
+		"bd933a2b": "getLINKBalanceClient()",
+		"2a3521b3": "getUNIalanceClien()",
+		"2f041eb8": "getWETHBalanceClient()",
+		"57970e93": "linkToken()",
+		"85ce4fee": "uniToken()",
+		"4b57b0be": "wethToken()"
+	},
+	"gasEstimates": {
+		"Creation": {
+			"codeDepositCost": "398400",
+			"executionCost": "83904",
+			"totalCost": "482304"
+		},
+		"External": {
+			"DAI()": "466",
+			"LINK()": "379",
+			"UNI()": "401",
+			"WETH()": "400",
+			"daiToken()": "1323",
+			"getBalanceClient()": "1065",
+			"getDAIBalanceClient()": "infinite",
+			"getLINKBalanceClient()": "infinite",
+			"getUNIalanceClien()": "infinite",
+			"getWETHBalanceClient()": "infinite",
+			"linkToken()": "1302",
+			"uniToken()": "1324",
+			"wethToken()": "1365"
+		}
+	},
+	"devdoc": {
+		"kind": "dev",
+		"methods": {},
+		"version": 1
+	},
+	"userdoc": {
+		"kind": "user",
+		"methods": {},
+		"version": 1
+	},
+	"Runtime Bytecode": {
+		"generatedSources": [
+			{
+				"ast": {
+					"nodeType": "YulBlock",
+					"src": "0:3087:3",
+					"statements": [
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "70:80:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "80:22:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "offset",
+													"nodeType": "YulIdentifier",
+													"src": "95:6:3"
+												}
+											],
+											"functionName": {
+												"name": "mload",
+												"nodeType": "YulIdentifier",
+												"src": "89:5:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "89:13:3"
+										},
+										"variableNames": [
+											{
+												"name": "value",
+												"nodeType": "YulIdentifier",
+												"src": "80:5:3"
+											}
+										]
+									},
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "138:5:3"
+												}
+											],
+											"functionName": {
+												"name": "validator_revert_t_uint256",
+												"nodeType": "YulIdentifier",
+												"src": "111:26:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "111:33:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "111:33:3"
+									}
+								]
+							},
+							"name": "abi_decode_t_uint256_fromMemory",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "offset",
+									"nodeType": "YulTypedName",
+									"src": "48:6:3",
+									"type": ""
+								},
+								{
+									"name": "end",
+									"nodeType": "YulTypedName",
+									"src": "56:3:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "64:5:3",
+									"type": ""
+								}
+							],
+							"src": "7:143:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "233:207:3",
+								"statements": [
+									{
+										"body": {
+											"nodeType": "YulBlock",
+											"src": "279:16:3",
+											"statements": [
+												{
+													"expression": {
+														"arguments": [
+															{
+																"kind": "number",
+																"nodeType": "YulLiteral",
+																"src": "288:1:3",
+																"type": "",
+																"value": "0"
+															},
+															{
+																"kind": "number",
+																"nodeType": "YulLiteral",
+																"src": "291:1:3",
+																"type": "",
+																"value": "0"
+															}
+														],
+														"functionName": {
+															"name": "revert",
+															"nodeType": "YulIdentifier",
+															"src": "281:6:3"
+														},
+														"nodeType": "YulFunctionCall",
+														"src": "281:12:3"
+													},
+													"nodeType": "YulExpressionStatement",
+													"src": "281:12:3"
+												}
+											]
+										},
+										"condition": {
+											"arguments": [
+												{
+													"arguments": [
+														{
+															"name": "dataEnd",
+															"nodeType": "YulIdentifier",
+															"src": "254:7:3"
+														},
+														{
+															"name": "headStart",
+															"nodeType": "YulIdentifier",
+															"src": "263:9:3"
+														}
+													],
+													"functionName": {
+														"name": "sub",
+														"nodeType": "YulIdentifier",
+														"src": "250:3:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "250:23:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "275:2:3",
+													"type": "",
+													"value": "32"
+												}
+											],
+											"functionName": {
+												"name": "slt",
+												"nodeType": "YulIdentifier",
+												"src": "246:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "246:32:3"
+										},
+										"nodeType": "YulIf",
+										"src": "243:2:3"
+									},
+									{
+										"nodeType": "YulBlock",
+										"src": "305:128:3",
+										"statements": [
+											{
+												"nodeType": "YulVariableDeclaration",
+												"src": "320:15:3",
+												"value": {
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "334:1:3",
+													"type": "",
+													"value": "0"
+												},
+												"variables": [
+													{
+														"name": "offset",
+														"nodeType": "YulTypedName",
+														"src": "324:6:3",
+														"type": ""
+													}
+												]
+											},
+											{
+												"nodeType": "YulAssignment",
+												"src": "349:74:3",
+												"value": {
+													"arguments": [
+														{
+															"arguments": [
+																{
+																	"name": "headStart",
+																	"nodeType": "YulIdentifier",
+																	"src": "395:9:3"
+																},
+																{
+																	"name": "offset",
+																	"nodeType": "YulIdentifier",
+																	"src": "406:6:3"
+																}
+															],
+															"functionName": {
+																"name": "add",
+																"nodeType": "YulIdentifier",
+																"src": "391:3:3"
+															},
+															"nodeType": "YulFunctionCall",
+															"src": "391:22:3"
+														},
+														{
+															"name": "dataEnd",
+															"nodeType": "YulIdentifier",
+															"src": "415:7:3"
+														}
+													],
+													"functionName": {
+														"name": "abi_decode_t_uint256_fromMemory",
+														"nodeType": "YulIdentifier",
+														"src": "359:31:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "359:64:3"
+												},
+												"variableNames": [
+													{
+														"name": "value0",
+														"nodeType": "YulIdentifier",
+														"src": "349:6:3"
+													}
+												]
+											}
+										]
+									}
+								]
+							},
+							"name": "abi_decode_tuple_t_uint256_fromMemory",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "headStart",
+									"nodeType": "YulTypedName",
+									"src": "203:9:3",
+									"type": ""
+								},
+								{
+									"name": "dataEnd",
+									"nodeType": "YulTypedName",
+									"src": "214:7:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "value0",
+									"nodeType": "YulTypedName",
+									"src": "226:6:3",
+									"type": ""
+								}
+							],
+							"src": "156:284:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "519:74:3",
+								"statements": [
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "pos",
+													"nodeType": "YulIdentifier",
+													"src": "536:3:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "value",
+															"nodeType": "YulIdentifier",
+															"src": "580:5:3"
+														}
+													],
+													"functionName": {
+														"name": "convert_t_address_payable_to_t_address",
+														"nodeType": "YulIdentifier",
+														"src": "541:38:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "541:45:3"
+												}
+											],
+											"functionName": {
+												"name": "mstore",
+												"nodeType": "YulIdentifier",
+												"src": "529:6:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "529:58:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "529:58:3"
+									}
+								]
+							},
+							"name": "abi_encode_t_address_payable_to_t_address_fromStack",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "507:5:3",
+									"type": ""
+								},
+								{
+									"name": "pos",
+									"nodeType": "YulTypedName",
+									"src": "514:3:3",
+									"type": ""
+								}
+							],
+							"src": "446:147:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "664:53:3",
+								"statements": [
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "pos",
+													"nodeType": "YulIdentifier",
+													"src": "681:3:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "value",
+															"nodeType": "YulIdentifier",
+															"src": "704:5:3"
+														}
+													],
+													"functionName": {
+														"name": "cleanup_t_address",
+														"nodeType": "YulIdentifier",
+														"src": "686:17:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "686:24:3"
+												}
+											],
+											"functionName": {
+												"name": "mstore",
+												"nodeType": "YulIdentifier",
+												"src": "674:6:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "674:37:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "674:37:3"
+									}
+								]
+							},
+							"name": "abi_encode_t_address_to_t_address_fromStack",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "652:5:3",
+									"type": ""
+								},
+								{
+									"name": "pos",
+									"nodeType": "YulTypedName",
+									"src": "659:3:3",
+									"type": ""
+								}
+							],
+							"src": "599:118:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "801:79:3",
+								"statements": [
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "pos",
+													"nodeType": "YulIdentifier",
+													"src": "818:3:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "value",
+															"nodeType": "YulIdentifier",
+															"src": "867:5:3"
+														}
+													],
+													"functionName": {
+														"name": "convert_t_contract$_IERC20_$34_to_t_address",
+														"nodeType": "YulIdentifier",
+														"src": "823:43:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "823:50:3"
+												}
+											],
+											"functionName": {
+												"name": "mstore",
+												"nodeType": "YulIdentifier",
+												"src": "811:6:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "811:63:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "811:63:3"
+									}
+								]
+							},
+							"name": "abi_encode_t_contract$_IERC20_$34_to_t_address_fromStack",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "789:5:3",
+									"type": ""
+								},
+								{
+									"name": "pos",
+									"nodeType": "YulTypedName",
+									"src": "796:3:3",
+									"type": ""
+								}
+							],
+							"src": "723:157:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "951:53:3",
+								"statements": [
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "pos",
+													"nodeType": "YulIdentifier",
+													"src": "968:3:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "value",
+															"nodeType": "YulIdentifier",
+															"src": "991:5:3"
+														}
+													],
+													"functionName": {
+														"name": "cleanup_t_uint256",
+														"nodeType": "YulIdentifier",
+														"src": "973:17:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "973:24:3"
+												}
+											],
+											"functionName": {
+												"name": "mstore",
+												"nodeType": "YulIdentifier",
+												"src": "961:6:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "961:37:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "961:37:3"
+									}
+								]
+							},
+							"name": "abi_encode_t_uint256_to_t_uint256_fromStack",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "939:5:3",
+									"type": ""
+								},
+								{
+									"name": "pos",
+									"nodeType": "YulTypedName",
+									"src": "946:3:3",
+									"type": ""
+								}
+							],
+							"src": "886:118:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "1108:124:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "1118:26:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "headStart",
+													"nodeType": "YulIdentifier",
+													"src": "1130:9:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "1141:2:3",
+													"type": "",
+													"value": "32"
+												}
+											],
+											"functionName": {
+												"name": "add",
+												"nodeType": "YulIdentifier",
+												"src": "1126:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1126:18:3"
+										},
+										"variableNames": [
+											{
+												"name": "tail",
+												"nodeType": "YulIdentifier",
+												"src": "1118:4:3"
+											}
+										]
+									},
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "value0",
+													"nodeType": "YulIdentifier",
+													"src": "1198:6:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "headStart",
+															"nodeType": "YulIdentifier",
+															"src": "1211:9:3"
+														},
+														{
+															"kind": "number",
+															"nodeType": "YulLiteral",
+															"src": "1222:1:3",
+															"type": "",
+															"value": "0"
+														}
+													],
+													"functionName": {
+														"name": "add",
+														"nodeType": "YulIdentifier",
+														"src": "1207:3:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "1207:17:3"
+												}
+											],
+											"functionName": {
+												"name": "abi_encode_t_address_to_t_address_fromStack",
+												"nodeType": "YulIdentifier",
+												"src": "1154:43:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1154:71:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "1154:71:3"
+									}
+								]
+							},
+							"name": "abi_encode_tuple_t_address__to_t_address__fromStack_reversed",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "headStart",
+									"nodeType": "YulTypedName",
+									"src": "1080:9:3",
+									"type": ""
+								},
+								{
+									"name": "value0",
+									"nodeType": "YulTypedName",
+									"src": "1092:6:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "tail",
+									"nodeType": "YulTypedName",
+									"src": "1103:4:3",
+									"type": ""
+								}
+							],
+							"src": "1010:222:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "1344:132:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "1354:26:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "headStart",
+													"nodeType": "YulIdentifier",
+													"src": "1366:9:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "1377:2:3",
+													"type": "",
+													"value": "32"
+												}
+											],
+											"functionName": {
+												"name": "add",
+												"nodeType": "YulIdentifier",
+												"src": "1362:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1362:18:3"
+										},
+										"variableNames": [
+											{
+												"name": "tail",
+												"nodeType": "YulIdentifier",
+												"src": "1354:4:3"
+											}
+										]
+									},
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "value0",
+													"nodeType": "YulIdentifier",
+													"src": "1442:6:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "headStart",
+															"nodeType": "YulIdentifier",
+															"src": "1455:9:3"
+														},
+														{
+															"kind": "number",
+															"nodeType": "YulLiteral",
+															"src": "1466:1:3",
+															"type": "",
+															"value": "0"
+														}
+													],
+													"functionName": {
+														"name": "add",
+														"nodeType": "YulIdentifier",
+														"src": "1451:3:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "1451:17:3"
+												}
+											],
+											"functionName": {
+												"name": "abi_encode_t_address_payable_to_t_address_fromStack",
+												"nodeType": "YulIdentifier",
+												"src": "1390:51:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1390:79:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "1390:79:3"
+									}
+								]
+							},
+							"name": "abi_encode_tuple_t_address_payable__to_t_address__fromStack_reversed",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "headStart",
+									"nodeType": "YulTypedName",
+									"src": "1316:9:3",
+									"type": ""
+								},
+								{
+									"name": "value0",
+									"nodeType": "YulTypedName",
+									"src": "1328:6:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "tail",
+									"nodeType": "YulTypedName",
+									"src": "1339:4:3",
+									"type": ""
+								}
+							],
+							"src": "1238:238:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "1593:137:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "1603:26:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "headStart",
+													"nodeType": "YulIdentifier",
+													"src": "1615:9:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "1626:2:3",
+													"type": "",
+													"value": "32"
+												}
+											],
+											"functionName": {
+												"name": "add",
+												"nodeType": "YulIdentifier",
+												"src": "1611:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1611:18:3"
+										},
+										"variableNames": [
+											{
+												"name": "tail",
+												"nodeType": "YulIdentifier",
+												"src": "1603:4:3"
+											}
+										]
+									},
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "value0",
+													"nodeType": "YulIdentifier",
+													"src": "1696:6:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "headStart",
+															"nodeType": "YulIdentifier",
+															"src": "1709:9:3"
+														},
+														{
+															"kind": "number",
+															"nodeType": "YulLiteral",
+															"src": "1720:1:3",
+															"type": "",
+															"value": "0"
+														}
+													],
+													"functionName": {
+														"name": "add",
+														"nodeType": "YulIdentifier",
+														"src": "1705:3:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "1705:17:3"
+												}
+											],
+											"functionName": {
+												"name": "abi_encode_t_contract$_IERC20_$34_to_t_address_fromStack",
+												"nodeType": "YulIdentifier",
+												"src": "1639:56:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1639:84:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "1639:84:3"
+									}
+								]
+							},
+							"name": "abi_encode_tuple_t_contract$_IERC20_$34__to_t_address__fromStack_reversed",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "headStart",
+									"nodeType": "YulTypedName",
+									"src": "1565:9:3",
+									"type": ""
+								},
+								{
+									"name": "value0",
+									"nodeType": "YulTypedName",
+									"src": "1577:6:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "tail",
+									"nodeType": "YulTypedName",
+									"src": "1588:4:3",
+									"type": ""
+								}
+							],
+							"src": "1482:248:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "1834:124:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "1844:26:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "headStart",
+													"nodeType": "YulIdentifier",
+													"src": "1856:9:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "1867:2:3",
+													"type": "",
+													"value": "32"
+												}
+											],
+											"functionName": {
+												"name": "add",
+												"nodeType": "YulIdentifier",
+												"src": "1852:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1852:18:3"
+										},
+										"variableNames": [
+											{
+												"name": "tail",
+												"nodeType": "YulIdentifier",
+												"src": "1844:4:3"
+											}
+										]
+									},
+									{
+										"expression": {
+											"arguments": [
+												{
+													"name": "value0",
+													"nodeType": "YulIdentifier",
+													"src": "1924:6:3"
+												},
+												{
+													"arguments": [
+														{
+															"name": "headStart",
+															"nodeType": "YulIdentifier",
+															"src": "1937:9:3"
+														},
+														{
+															"kind": "number",
+															"nodeType": "YulLiteral",
+															"src": "1948:1:3",
+															"type": "",
+															"value": "0"
+														}
+													],
+													"functionName": {
+														"name": "add",
+														"nodeType": "YulIdentifier",
+														"src": "1933:3:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "1933:17:3"
+												}
+											],
+											"functionName": {
+												"name": "abi_encode_t_uint256_to_t_uint256_fromStack",
+												"nodeType": "YulIdentifier",
+												"src": "1880:43:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "1880:71:3"
+										},
+										"nodeType": "YulExpressionStatement",
+										"src": "1880:71:3"
+									}
+								]
+							},
+							"name": "abi_encode_tuple_t_uint256__to_t_uint256__fromStack_reversed",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "headStart",
+									"nodeType": "YulTypedName",
+									"src": "1806:9:3",
+									"type": ""
+								},
+								{
+									"name": "value0",
+									"nodeType": "YulTypedName",
+									"src": "1818:6:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "tail",
+									"nodeType": "YulTypedName",
+									"src": "1829:4:3",
+									"type": ""
+								}
+							],
+							"src": "1736:222:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2009:51:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2019:35:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2048:5:3"
+												}
+											],
+											"functionName": {
+												"name": "cleanup_t_uint160",
+												"nodeType": "YulIdentifier",
+												"src": "2030:17:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2030:24:3"
+										},
+										"variableNames": [
+											{
+												"name": "cleaned",
+												"nodeType": "YulIdentifier",
+												"src": "2019:7:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "cleanup_t_address",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "1991:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "cleaned",
+									"nodeType": "YulTypedName",
+									"src": "2001:7:3",
+									"type": ""
+								}
+							],
+							"src": "1964:96:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2111:81:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2121:65:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2136:5:3"
+												},
+												{
+													"kind": "number",
+													"nodeType": "YulLiteral",
+													"src": "2143:42:3",
+													"type": "",
+													"value": "0xffffffffffffffffffffffffffffffffffffffff"
+												}
+											],
+											"functionName": {
+												"name": "and",
+												"nodeType": "YulIdentifier",
+												"src": "2132:3:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2132:54:3"
+										},
+										"variableNames": [
+											{
+												"name": "cleaned",
+												"nodeType": "YulIdentifier",
+												"src": "2121:7:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "cleanup_t_uint160",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2093:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "cleaned",
+									"nodeType": "YulTypedName",
+									"src": "2103:7:3",
+									"type": ""
+								}
+							],
+							"src": "2066:126:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2243:32:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2253:16:3",
+										"value": {
+											"name": "value",
+											"nodeType": "YulIdentifier",
+											"src": "2264:5:3"
+										},
+										"variableNames": [
+											{
+												"name": "cleaned",
+												"nodeType": "YulIdentifier",
+												"src": "2253:7:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "cleanup_t_uint256",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2225:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "cleaned",
+									"nodeType": "YulTypedName",
+									"src": "2235:7:3",
+									"type": ""
+								}
+							],
+							"src": "2198:77:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2349:66:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2359:50:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2403:5:3"
+												}
+											],
+											"functionName": {
+												"name": "convert_t_uint160_to_t_address",
+												"nodeType": "YulIdentifier",
+												"src": "2372:30:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2372:37:3"
+										},
+										"variableNames": [
+											{
+												"name": "converted",
+												"nodeType": "YulIdentifier",
+												"src": "2359:9:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "convert_t_address_payable_to_t_address",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2329:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "converted",
+									"nodeType": "YulTypedName",
+									"src": "2339:9:3",
+									"type": ""
+								}
+							],
+							"src": "2281:134:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2494:79:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2504:63:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2561:5:3"
+												}
+											],
+											"functionName": {
+												"name": "convert_t_contract$_IERC20_$34_to_t_uint160",
+												"nodeType": "YulIdentifier",
+												"src": "2517:43:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2517:50:3"
+										},
+										"variableNames": [
+											{
+												"name": "converted",
+												"nodeType": "YulIdentifier",
+												"src": "2504:9:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "convert_t_contract$_IERC20_$34_to_t_address",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2474:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "converted",
+									"nodeType": "YulTypedName",
+									"src": "2484:9:3",
+									"type": ""
+								}
+							],
+							"src": "2421:152:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2652:53:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2662:37:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2693:5:3"
+												}
+											],
+											"functionName": {
+												"name": "cleanup_t_uint160",
+												"nodeType": "YulIdentifier",
+												"src": "2675:17:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2675:24:3"
+										},
+										"variableNames": [
+											{
+												"name": "converted",
+												"nodeType": "YulIdentifier",
+												"src": "2662:9:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "convert_t_contract$_IERC20_$34_to_t_uint160",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2632:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "converted",
+									"nodeType": "YulTypedName",
+									"src": "2642:9:3",
+									"type": ""
+								}
+							],
+							"src": "2579:126:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2771:66:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2781:50:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2825:5:3"
+												}
+											],
+											"functionName": {
+												"name": "convert_t_uint160_to_t_uint160",
+												"nodeType": "YulIdentifier",
+												"src": "2794:30:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2794:37:3"
+										},
+										"variableNames": [
+											{
+												"name": "converted",
+												"nodeType": "YulIdentifier",
+												"src": "2781:9:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "convert_t_uint160_to_t_address",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2751:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "converted",
+									"nodeType": "YulTypedName",
+									"src": "2761:9:3",
+									"type": ""
+								}
+							],
+							"src": "2711:126:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "2903:53:3",
+								"statements": [
+									{
+										"nodeType": "YulAssignment",
+										"src": "2913:37:3",
+										"value": {
+											"arguments": [
+												{
+													"name": "value",
+													"nodeType": "YulIdentifier",
+													"src": "2944:5:3"
+												}
+											],
+											"functionName": {
+												"name": "cleanup_t_uint160",
+												"nodeType": "YulIdentifier",
+												"src": "2926:17:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "2926:24:3"
+										},
+										"variableNames": [
+											{
+												"name": "converted",
+												"nodeType": "YulIdentifier",
+												"src": "2913:9:3"
+											}
+										]
+									}
+								]
+							},
+							"name": "convert_t_uint160_to_t_uint160",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2883:5:3",
+									"type": ""
+								}
+							],
+							"returnVariables": [
+								{
+									"name": "converted",
+									"nodeType": "YulTypedName",
+									"src": "2893:9:3",
+									"type": ""
+								}
+							],
+							"src": "2843:113:3"
+						},
+						{
+							"body": {
+								"nodeType": "YulBlock",
+								"src": "3005:79:3",
+								"statements": [
+									{
+										"body": {
+											"nodeType": "YulBlock",
+											"src": "3062:16:3",
+											"statements": [
+												{
+													"expression": {
+														"arguments": [
+															{
+																"kind": "number",
+																"nodeType": "YulLiteral",
+																"src": "3071:1:3",
+																"type": "",
+																"value": "0"
+															},
+															{
+																"kind": "number",
+																"nodeType": "YulLiteral",
+																"src": "3074:1:3",
+																"type": "",
+																"value": "0"
+															}
+														],
+														"functionName": {
+															"name": "revert",
+															"nodeType": "YulIdentifier",
+															"src": "3064:6:3"
+														},
+														"nodeType": "YulFunctionCall",
+														"src": "3064:12:3"
+													},
+													"nodeType": "YulExpressionStatement",
+													"src": "3064:12:3"
+												}
+											]
+										},
+										"condition": {
+											"arguments": [
+												{
+													"arguments": [
+														{
+															"name": "value",
+															"nodeType": "YulIdentifier",
+															"src": "3028:5:3"
+														},
+														{
+															"arguments": [
+																{
+																	"name": "value",
+																	"nodeType": "YulIdentifier",
+																	"src": "3053:5:3"
+																}
+															],
+															"functionName": {
+																"name": "cleanup_t_uint256",
+																"nodeType": "YulIdentifier",
+																"src": "3035:17:3"
+															},
+															"nodeType": "YulFunctionCall",
+															"src": "3035:24:3"
+														}
+													],
+													"functionName": {
+														"name": "eq",
+														"nodeType": "YulIdentifier",
+														"src": "3025:2:3"
+													},
+													"nodeType": "YulFunctionCall",
+													"src": "3025:35:3"
+												}
+											],
+											"functionName": {
+												"name": "iszero",
+												"nodeType": "YulIdentifier",
+												"src": "3018:6:3"
+											},
+											"nodeType": "YulFunctionCall",
+											"src": "3018:43:3"
+										},
+										"nodeType": "YulIf",
+										"src": "3015:2:3"
+									}
+								]
+							},
+							"name": "validator_revert_t_uint256",
+							"nodeType": "YulFunctionDefinition",
+							"parameters": [
+								{
+									"name": "value",
+									"nodeType": "YulTypedName",
+									"src": "2998:5:3",
+									"type": ""
+								}
+							],
+							"src": "2962:122:3"
+						}
+					]
+				},
+				"contents": "{\n\n    function abi_decode_t_uint256_fromMemory(offset, end) -> value {\n        value := mload(offset)\n        validator_revert_t_uint256(value)\n    }\n\n    function abi_decode_tuple_t_uint256_fromMemory(headStart, dataEnd) -> value0 {\n        if slt(sub(dataEnd, headStart), 32) { revert(0, 0) }\n\n        {\n\n            let offset := 0\n\n            value0 := abi_decode_t_uint256_fromMemory(add(headStart, offset), dataEnd)\n        }\n\n    }\n\n    function abi_encode_t_address_payable_to_t_address_fromStack(value, pos) {\n        mstore(pos, convert_t_address_payable_to_t_address(value))\n    }\n\n    function abi_encode_t_address_to_t_address_fromStack(value, pos) {\n        mstore(pos, cleanup_t_address(value))\n    }\n\n    function abi_encode_t_contract$_IERC20_$34_to_t_address_fromStack(value, pos) {\n        mstore(pos, convert_t_contract$_IERC20_$34_to_t_address(value))\n    }\n\n    function abi_encode_t_uint256_to_t_uint256_fromStack(value, pos) {\n        mstore(pos, cleanup_t_uint256(value))\n    }\n\n    function abi_encode_tuple_t_address__to_t_address__fromStack_reversed(headStart , value0) -> tail {\n        tail := add(headStart, 32)\n\n        abi_encode_t_address_to_t_address_fromStack(value0,  add(headStart, 0))\n\n    }\n\n    function abi_encode_tuple_t_address_payable__to_t_address__fromStack_reversed(headStart , value0) -> tail {\n        tail := add(headStart, 32)\n\n        abi_encode_t_address_payable_to_t_address_fromStack(value0,  add(headStart, 0))\n\n    }\n\n    function abi_encode_tuple_t_contract$_IERC20_$34__to_t_address__fromStack_reversed(headStart , value0) -> tail {\n        tail := add(headStart, 32)\n\n        abi_encode_t_contract$_IERC20_$34_to_t_address_fromStack(value0,  add(headStart, 0))\n\n    }\n\n    function abi_encode_tuple_t_uint256__to_t_uint256__fromStack_reversed(headStart , value0) -> tail {\n        tail := add(headStart, 32)\n\n        abi_encode_t_uint256_to_t_uint256_fromStack(value0,  add(headStart, 0))\n\n    }\n\n    function cleanup_t_address(value) -> cleaned {\n        cleaned := cleanup_t_uint160(value)\n    }\n\n    function cleanup_t_uint160(value) -> cleaned {\n        cleaned := and(value, 0xffffffffffffffffffffffffffffffffffffffff)\n    }\n\n    function cleanup_t_uint256(value) -> cleaned {\n        cleaned := value\n    }\n\n    function convert_t_address_payable_to_t_address(value) -> converted {\n        converted := convert_t_uint160_to_t_address(value)\n    }\n\n    function convert_t_contract$_IERC20_$34_to_t_address(value) -> converted {\n        converted := convert_t_contract$_IERC20_$34_to_t_uint160(value)\n    }\n\n    function convert_t_contract$_IERC20_$34_to_t_uint160(value) -> converted {\n        converted := cleanup_t_uint160(value)\n    }\n\n    function convert_t_uint160_to_t_address(value) -> converted {\n        converted := convert_t_uint160_to_t_uint160(value)\n    }\n\n    function convert_t_uint160_to_t_uint160(value) -> converted {\n        converted := cleanup_t_uint160(value)\n    }\n\n    function validator_revert_t_uint256(value) {\n        if iszero(eq(value, cleanup_t_uint256(value))) { revert(0, 0) }\n    }\n\n}\n",
+				"id": 3,
+				"language": "Yul",
+				"name": "#utility.yul"
+			}
+		],
+		"immutableReferences": {},
+		"linkReferences": {},
+		"object": "608060405234801561001057600080fd5b50600436106100cf5760003560e01c8063541bcb761161008c578063ad5c464811610066578063ad5c4648146101e2578063bd933a2b14610200578063be22f5461461021e578063e0bab4c41461023c576100cf565b8063541bcb761461018857806357970e93146101a657806385ce4fee146101c4576100cf565b80631b6b6d23146100d45780631c48ae73146100f25780632a3521b3146101105780632f041eb81461012e578063412c09921461014c5780634b57b0be1461016a575b600080fd5b6100dc61025a565b6040516100e99190610679565b60405180910390f35b6100fa610272565b60405161010791906106ca565b60405180910390f35b610118610291565b60405161012591906106ca565b60405180910390f35b610136610335565b60405161014391906106ca565b60405180910390f35b6101546103d9565b60405161016191906106ca565b60405180910390f35b61017261047d565b60405161017f91906106af565b60405180910390f35b6101906104a1565b60405161019d9190610679565b60405180910390f35b6101ae6104b9565b6040516101bb91906106af565b60405180910390f35b6101cc6104df565b6040516101d991906106af565b60405180910390f35b6101ea610505565b6040516101f79190610679565b60405180910390f35b61020861051d565b60405161021591906106ca565b60405180910390f35b6102266105c1565b60405161023391906106af565b60405180910390f35b6102446105e7565b6040516102519190610679565b60405180910390f35b73326c977e6efc84e512bb9c30f76e30c160ed06fb81565b60003373ffffffffffffffffffffffffffffffffffffffff1631905090565b6000731f9840a85d5af5bf1d1762f925bdaddc4201f98473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016102e09190610694565b60206040518083038186803b1580156102f857600080fd5b505afa15801561030c573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103309190610614565b905090565b600073b4fbf271143f4fbf7b91a5ded31805e42b2208d673ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016103849190610694565b60206040518083038186803b15801561039c57600080fd5b505afa1580156103b0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103d49190610614565b905090565b60007311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84473ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b81526004016104289190610694565b60206040518083038186803b15801561044057600080fd5b505afa158015610454573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104789190610614565b905090565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b731f9840a85d5af5bf1d1762f925bdaddc4201f98481565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b73b4fbf271143f4fbf7b91a5ded31805e42b2208d681565b600073326c977e6efc84e512bb9c30f76e30c160ed06fb73ffffffffffffffffffffffffffffffffffffffff166370a08231336040518263ffffffff1660e01b815260040161056c9190610694565b60206040518083038186803b15801561058457600080fd5b505afa158015610598573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105bc9190610614565b905090565b600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b7311fe4b6ae13d2a6055c8d9cf65c55bac32b5d84481565b60008151905061060e8161077b565b92915050565b60006020828403121561062657600080fd5b6000610634848285016105ff565b91505092915050565b61064681610721565b82525050565b610655816106e5565b82525050565b61066481610733565b82525050565b61067381610717565b82525050565b600060208201905061068e600083018461064c565b92915050565b60006020820190506106a9600083018461063d565b92915050565b60006020820190506106c4600083018461065b565b92915050565b60006020820190506106df600083018461066a565b92915050565b60006106f0826106f7565b9050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000819050919050565b600061072c82610757565b9050919050565b600061073e82610745565b9050919050565b6000610750826106f7565b9050919050565b600061076282610769565b9050919050565b6000610774826106f7565b9050919050565b61078481610717565b811461078f57600080fd5b5056fea264697066735822122027e9e260de401b2ab5cd856dbe0ab521f84393c57ff3f72b0cfb0cec7696ed0d64736f6c63430007060033",
+		"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0xCF JUMPI PUSH1 0x0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x541BCB76 GT PUSH2 0x8C JUMPI DUP1 PUSH4 0xAD5C4648 GT PUSH2 0x66 JUMPI DUP1 PUSH4 0xAD5C4648 EQ PUSH2 0x1E2 JUMPI DUP1 PUSH4 0xBD933A2B EQ PUSH2 0x200 JUMPI DUP1 PUSH4 0xBE22F546 EQ PUSH2 0x21E JUMPI DUP1 PUSH4 0xE0BAB4C4 EQ PUSH2 0x23C JUMPI PUSH2 0xCF JUMP JUMPDEST DUP1 PUSH4 0x541BCB76 EQ PUSH2 0x188 JUMPI DUP1 PUSH4 0x57970E93 EQ PUSH2 0x1A6 JUMPI DUP1 PUSH4 0x85CE4FEE EQ PUSH2 0x1C4 JUMPI PUSH2 0xCF JUMP JUMPDEST DUP1 PUSH4 0x1B6B6D23 EQ PUSH2 0xD4 JUMPI DUP1 PUSH4 0x1C48AE73 EQ PUSH2 0xF2 JUMPI DUP1 PUSH4 0x2A3521B3 EQ PUSH2 0x110 JUMPI DUP1 PUSH4 0x2F041EB8 EQ PUSH2 0x12E JUMPI DUP1 PUSH4 0x412C0992 EQ PUSH2 0x14C JUMPI DUP1 PUSH4 0x4B57B0BE EQ PUSH2 0x16A JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH2 0xDC PUSH2 0x25A JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0xE9 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0xFA PUSH2 0x272 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x107 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x118 PUSH2 0x291 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x125 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x136 PUSH2 0x335 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x143 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x154 PUSH2 0x3D9 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x161 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x172 PUSH2 0x47D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x17F SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x190 PUSH2 0x4A1 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x19D SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1AE PUSH2 0x4B9 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1BB SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1CC PUSH2 0x4DF JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1D9 SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x1EA PUSH2 0x505 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x1F7 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x208 PUSH2 0x51D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x215 SWAP2 SWAP1 PUSH2 0x6CA JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x226 PUSH2 0x5C1 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x233 SWAP2 SWAP1 PUSH2 0x6AF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH2 0x244 PUSH2 0x5E7 JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x251 SWAP2 SWAP1 PUSH2 0x679 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH20 0x326C977E6EFC84E512BB9C30F76E30C160ED06FB DUP2 JUMP JUMPDEST PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND BALANCE SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x1F9840A85D5AF5BF1D1762F925BDADDC4201F984 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x2E0 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x2F8 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x30C JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x330 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0xB4FBF271143F4FBF7B91A5DED31805E42B2208D6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x384 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x39C JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x3B0 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x3D4 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x428 SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x440 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x454 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x478 SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x0 DUP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0x1F9840A85D5AF5BF1D1762F925BDADDC4201F984 DUP2 JUMP JUMPDEST PUSH1 0x1 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH1 0x2 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0xB4FBF271143F4FBF7B91A5DED31805E42B2208D6 DUP2 JUMP JUMPDEST PUSH1 0x0 PUSH20 0x326C977E6EFC84E512BB9C30F76E30C160ED06FB PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH4 0x70A08231 CALLER PUSH1 0x40 MLOAD DUP3 PUSH4 0xFFFFFFFF AND PUSH1 0xE0 SHL DUP2 MSTORE PUSH1 0x4 ADD PUSH2 0x56C SWAP2 SWAP1 PUSH2 0x694 JUMP JUMPDEST PUSH1 0x20 PUSH1 0x40 MLOAD DUP1 DUP4 SUB DUP2 DUP7 DUP1 EXTCODESIZE ISZERO DUP1 ISZERO PUSH2 0x584 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP GAS STATICCALL ISZERO DUP1 ISZERO PUSH2 0x598 JUMPI RETURNDATASIZE PUSH1 0x0 DUP1 RETURNDATACOPY RETURNDATASIZE PUSH1 0x0 REVERT JUMPDEST POP POP POP POP PUSH1 0x40 MLOAD RETURNDATASIZE PUSH1 0x1F NOT PUSH1 0x1F DUP3 ADD AND DUP3 ADD DUP1 PUSH1 0x40 MSTORE POP DUP2 ADD SWAP1 PUSH2 0x5BC SWAP2 SWAP1 PUSH2 0x614 JUMP JUMPDEST SWAP1 POP SWAP1 JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH20 0x11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844 DUP2 JUMP JUMPDEST PUSH1 0x0 DUP2 MLOAD SWAP1 POP PUSH2 0x60E DUP2 PUSH2 0x77B JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 DUP5 SUB SLT ISZERO PUSH2 0x626 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x0 PUSH2 0x634 DUP5 DUP3 DUP6 ADD PUSH2 0x5FF JUMP JUMPDEST SWAP2 POP POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH2 0x646 DUP2 PUSH2 0x721 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x655 DUP2 PUSH2 0x6E5 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x664 DUP2 PUSH2 0x733 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH2 0x673 DUP2 PUSH2 0x717 JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x68E PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x64C JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6A9 PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x63D JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6C4 PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x65B JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x6DF PUSH1 0x0 DUP4 ADD DUP5 PUSH2 0x66A JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x6F0 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF DUP3 AND SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 DUP2 SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x72C DUP3 PUSH2 0x757 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x73E DUP3 PUSH2 0x745 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x750 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x762 DUP3 PUSH2 0x769 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x774 DUP3 PUSH2 0x6F7 JUMP JUMPDEST SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH2 0x784 DUP2 PUSH2 0x717 JUMP JUMPDEST DUP2 EQ PUSH2 0x78F JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0x27 0xE9 0xE2 PUSH1 0xDE BLOCKHASH SHL 0x2A 0xB5 0xCD DUP6 PUSH14 0xBE0AB521F84393C57FF3F72B0CFB 0xC 0xEC PUSH23 0x96ED0D64736F6C63430007060033000000000000000000 ",
+		"sourceMap": "373:1181:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;402:73;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1448:103;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1178:128;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;902:132;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1312:130;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;724:38;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;562:72;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;769:38;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;814:36;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;482:73;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;1040:132;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;857:36;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;641:72;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;402:73;433:42;402:73;:::o;1448:103::-;1499:7;1525:10;:18;;;1518:25;;1448:103;:::o;1178:128::-;1230:7;592:42;1261:21;;;1283:10;1261:33;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1254:40;;1178:128;:::o;902:132::-;957:7;513:42;988:22;;;1011:10;988:34;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;981:41;;902:132;:::o;1312:130::-;1366:7;671:42;1397:21;;;1419:10;1397:33;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1390:40;;1312:130;:::o;724:38::-;;;;;;;;;;;;:::o;562:72::-;592:42;562:72;:::o;769:38::-;;;;;;;;;;;;;:::o;814:36::-;;;;;;;;;;;;;:::o;482:73::-;513:42;482:73;:::o;1040:132::-;1095:7;433:42;1126:22;;;1149:10;1126:34;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1119:41;;1040:132;:::o;857:36::-;;;;;;;;;;;;;:::o;641:72::-;671:42;641:72;:::o;7:143:3:-;;95:6;89:13;80:22;;111:33;138:5;111:33;:::i;:::-;70:80;;;;:::o;156:284::-;;275:2;263:9;254:7;250:23;246:32;243:2;;;291:1;288;281:12;243:2;334:1;359:64;415:7;406:6;395:9;391:22;359:64;:::i;:::-;349:74;;305:128;233:207;;;;:::o;446:147::-;541:45;580:5;541:45;:::i;:::-;536:3;529:58;519:74;;:::o;599:118::-;686:24;704:5;686:24;:::i;:::-;681:3;674:37;664:53;;:::o;723:157::-;823:50;867:5;823:50;:::i;:::-;818:3;811:63;801:79;;:::o;886:118::-;973:24;991:5;973:24;:::i;:::-;968:3;961:37;951:53;;:::o;1010:222::-;;1141:2;1130:9;1126:18;1118:26;;1154:71;1222:1;1211:9;1207:17;1198:6;1154:71;:::i;:::-;1108:124;;;;:::o;1238:238::-;;1377:2;1366:9;1362:18;1354:26;;1390:79;1466:1;1455:9;1451:17;1442:6;1390:79;:::i;:::-;1344:132;;;;:::o;1482:248::-;;1626:2;1615:9;1611:18;1603:26;;1639:84;1720:1;1709:9;1705:17;1696:6;1639:84;:::i;:::-;1593:137;;;;:::o;1736:222::-;;1867:2;1856:9;1852:18;1844:26;;1880:71;1948:1;1937:9;1933:17;1924:6;1880:71;:::i;:::-;1834:124;;;;:::o;1964:96::-;;2030:24;2048:5;2030:24;:::i;:::-;2019:35;;2009:51;;;:::o;2066:126::-;;2143:42;2136:5;2132:54;2121:65;;2111:81;;;:::o;2198:77::-;;2264:5;2253:16;;2243:32;;;:::o;2281:134::-;;2372:37;2403:5;2372:37;:::i;:::-;2359:50;;2349:66;;;:::o;2421:152::-;;2517:50;2561:5;2517:50;:::i;:::-;2504:63;;2494:79;;;:::o;2579:126::-;;2675:24;2693:5;2675:24;:::i;:::-;2662:37;;2652:53;;;:::o;2711:126::-;;2794:37;2825:5;2794:37;:::i;:::-;2781:50;;2771:66;;;:::o;2843:113::-;;2926:24;2944:5;2926:24;:::i;:::-;2913:37;;2903:53;;;:::o;2962:122::-;3035:24;3053:5;3035:24;:::i;:::-;3028:5;3025:35;3015:2;;3074:1;3071;3064:12;3015:2;3005:79;:::o"
+	},
+	"Assembly": ".code\n  PUSH 80\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH 40\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  MSTORE \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH B4FBF271143F4FBF7B91A5DED31805E42B2208D6\t\t\t0xB4FBF271143F4FBf7B91A5ded318...\n  PUSH 0\t\t\tIERC20 public wethToken = IERC...\n  DUP1 \t\t\tIERC20 public wethToken = IERC...\n  PUSH 100\t\t\tIERC20 public wethToken = IERC...\n  EXP \t\t\tIERC20 public wethToken = IERC...\n  DUP2 \t\t\tIERC20 public wethToken = IERC...\n  SLOAD \t\t\tIERC20 public wethToken = IERC...\n  DUP2 \t\t\tIERC20 public wethToken = IERC...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public wethToken = IERC...\n  MUL \t\t\tIERC20 public wethToken = IERC...\n  NOT \t\t\tIERC20 public wethToken = IERC...\n  AND \t\t\tIERC20 public wethToken = IERC...\n  SWAP1 \t\t\tIERC20 public wethToken = IERC...\n  DUP4 \t\t\tIERC20 public wethToken = IERC...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public wethToken = IERC...\n  AND \t\t\tIERC20 public wethToken = IERC...\n  MUL \t\t\tIERC20 public wethToken = IERC...\n  OR \t\t\tIERC20 public wethToken = IERC...\n  SWAP1 \t\t\tIERC20 public wethToken = IERC...\n  SSTORE \t\t\tIERC20 public wethToken = IERC...\n  POP \t\t\tIERC20 public wethToken = IERC...\n  PUSH 326C977E6EFC84E512BB9C30F76E30C160ED06FB\t\t\t0x326C977E6efc84E512bB9C30f76E...\n  PUSH 1\t\t\tIERC20 public linkToken = IERC...\n  PUSH 0\t\t\tIERC20 public linkToken = IERC...\n  PUSH 100\t\t\tIERC20 public linkToken = IERC...\n  EXP \t\t\tIERC20 public linkToken = IERC...\n  DUP2 \t\t\tIERC20 public linkToken = IERC...\n  SLOAD \t\t\tIERC20 public linkToken = IERC...\n  DUP2 \t\t\tIERC20 public linkToken = IERC...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public linkToken = IERC...\n  MUL \t\t\tIERC20 public linkToken = IERC...\n  NOT \t\t\tIERC20 public linkToken = IERC...\n  AND \t\t\tIERC20 public linkToken = IERC...\n  SWAP1 \t\t\tIERC20 public linkToken = IERC...\n  DUP4 \t\t\tIERC20 public linkToken = IERC...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public linkToken = IERC...\n  AND \t\t\tIERC20 public linkToken = IERC...\n  MUL \t\t\tIERC20 public linkToken = IERC...\n  OR \t\t\tIERC20 public linkToken = IERC...\n  SWAP1 \t\t\tIERC20 public linkToken = IERC...\n  SSTORE \t\t\tIERC20 public linkToken = IERC...\n  POP \t\t\tIERC20 public linkToken = IERC...\n  PUSH 1F9840A85D5AF5BF1D1762F925BDADDC4201F984\t\t\t0x1f9840a85d5aF5bf1D1762F925BD...\n  PUSH 2\t\t\tIERC20 public uniToken = IERC2...\n  PUSH 0\t\t\tIERC20 public uniToken = IERC2...\n  PUSH 100\t\t\tIERC20 public uniToken = IERC2...\n  EXP \t\t\tIERC20 public uniToken = IERC2...\n  DUP2 \t\t\tIERC20 public uniToken = IERC2...\n  SLOAD \t\t\tIERC20 public uniToken = IERC2...\n  DUP2 \t\t\tIERC20 public uniToken = IERC2...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public uniToken = IERC2...\n  MUL \t\t\tIERC20 public uniToken = IERC2...\n  NOT \t\t\tIERC20 public uniToken = IERC2...\n  AND \t\t\tIERC20 public uniToken = IERC2...\n  SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n  DUP4 \t\t\tIERC20 public uniToken = IERC2...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public uniToken = IERC2...\n  AND \t\t\tIERC20 public uniToken = IERC2...\n  MUL \t\t\tIERC20 public uniToken = IERC2...\n  OR \t\t\tIERC20 public uniToken = IERC2...\n  SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n  SSTORE \t\t\tIERC20 public uniToken = IERC2...\n  POP \t\t\tIERC20 public uniToken = IERC2...\n  PUSH 11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844\t\t\t0x11fE4B6AE13d2a6055C8D9cF65c5...\n  PUSH 3\t\t\tIERC20 public daiToken = IERC2...\n  PUSH 0\t\t\tIERC20 public daiToken = IERC2...\n  PUSH 100\t\t\tIERC20 public daiToken = IERC2...\n  EXP \t\t\tIERC20 public daiToken = IERC2...\n  DUP2 \t\t\tIERC20 public daiToken = IERC2...\n  SLOAD \t\t\tIERC20 public daiToken = IERC2...\n  DUP2 \t\t\tIERC20 public daiToken = IERC2...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public daiToken = IERC2...\n  MUL \t\t\tIERC20 public daiToken = IERC2...\n  NOT \t\t\tIERC20 public daiToken = IERC2...\n  AND \t\t\tIERC20 public daiToken = IERC2...\n  SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n  DUP4 \t\t\tIERC20 public daiToken = IERC2...\n  PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public daiToken = IERC2...\n  AND \t\t\tIERC20 public daiToken = IERC2...\n  MUL \t\t\tIERC20 public daiToken = IERC2...\n  OR \t\t\tIERC20 public daiToken = IERC2...\n  SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n  SSTORE \t\t\tIERC20 public daiToken = IERC2...\n  POP \t\t\tIERC20 public daiToken = IERC2...\n  CALLVALUE \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  ISZERO \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH [tag] 1\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  REVERT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\ntag 1\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  JUMPDEST \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  POP \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH #[$] 0000000000000000000000000000000000000000000000000000000000000000\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH [$] 0000000000000000000000000000000000000000000000000000000000000000\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  CODECOPY \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n  RETURN \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n.data\n  0:\n    .code\n      PUSH 80\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 40\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      MSTORE \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      CALLVALUE \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      ISZERO \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 1\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      REVERT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n    tag 1\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPDEST \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      POP \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 4\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      CALLDATASIZE \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      LT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 2\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      CALLDATALOAD \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH E0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      SHR \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 541BCB76\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      GT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 16\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH AD5C4648\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      GT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 17\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH AD5C4648\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 12\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH BD933A2B\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 13\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH BE22F546\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 14\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH E0BAB4C4\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 15\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 2\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMP \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n    tag 17\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPDEST \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 541BCB76\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 9\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 57970E93\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 10\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 85CE4FEE\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 11\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 2\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMP \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n    tag 16\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPDEST \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 1B6B6D23\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 3\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 1C48AE73\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 4\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 2A3521B3\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 5\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 2F041EB8\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 6\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 412C0992\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 7\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 4B57B0BE\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      EQ \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH [tag] 8\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPI \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n    tag 2\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      JUMPDEST \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      PUSH 0\t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      DUP1 \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n      REVERT \t\t\tcontract GetBalance {\\r\\n\\r\\n ...\n    tag 3\t\t\taddress public constant LINK =...\n      JUMPDEST \t\t\taddress public constant LINK =...\n      PUSH [tag] 18\t\t\taddress public constant LINK =...\n      PUSH [tag] 19\t\t\taddress public constant LINK =...\n      JUMP [in]\t\t\taddress public constant LINK =...\n    tag 18\t\t\taddress public constant LINK =...\n      JUMPDEST \t\t\taddress public constant LINK =...\n      PUSH 40\t\t\taddress public constant LINK =...\n      MLOAD \t\t\taddress public constant LINK =...\n      PUSH [tag] 20\t\t\taddress public constant LINK =...\n      SWAP2 \t\t\taddress public constant LINK =...\n      SWAP1 \t\t\taddress public constant LINK =...\n      PUSH [tag] 21\t\t\taddress public constant LINK =...\n      JUMP [in]\t\t\taddress public constant LINK =...\n    tag 20\t\t\taddress public constant LINK =...\n      JUMPDEST \t\t\taddress public constant LINK =...\n      PUSH 40\t\t\taddress public constant LINK =...\n      MLOAD \t\t\taddress public constant LINK =...\n      DUP1 \t\t\taddress public constant LINK =...\n      SWAP2 \t\t\taddress public constant LINK =...\n      SUB \t\t\taddress public constant LINK =...\n      SWAP1 \t\t\taddress public constant LINK =...\n      RETURN \t\t\taddress public constant LINK =...\n    tag 4\t\t\tfunction getBalanceClient() ex...\n      JUMPDEST \t\t\tfunction getBalanceClient() ex...\n      PUSH [tag] 22\t\t\tfunction getBalanceClient() ex...\n      PUSH [tag] 23\t\t\tfunction getBalanceClient() ex...\n      JUMP [in]\t\t\tfunction getBalanceClient() ex...\n    tag 22\t\t\tfunction getBalanceClient() ex...\n      JUMPDEST \t\t\tfunction getBalanceClient() ex...\n      PUSH 40\t\t\tfunction getBalanceClient() ex...\n      MLOAD \t\t\tfunction getBalanceClient() ex...\n      PUSH [tag] 24\t\t\tfunction getBalanceClient() ex...\n      SWAP2 \t\t\tfunction getBalanceClient() ex...\n      SWAP1 \t\t\tfunction getBalanceClient() ex...\n      PUSH [tag] 25\t\t\tfunction getBalanceClient() ex...\n      JUMP [in]\t\t\tfunction getBalanceClient() ex...\n    tag 24\t\t\tfunction getBalanceClient() ex...\n      JUMPDEST \t\t\tfunction getBalanceClient() ex...\n      PUSH 40\t\t\tfunction getBalanceClient() ex...\n      MLOAD \t\t\tfunction getBalanceClient() ex...\n      DUP1 \t\t\tfunction getBalanceClient() ex...\n      SWAP2 \t\t\tfunction getBalanceClient() ex...\n      SUB \t\t\tfunction getBalanceClient() ex...\n      SWAP1 \t\t\tfunction getBalanceClient() ex...\n      RETURN \t\t\tfunction getBalanceClient() ex...\n    tag 5\t\t\tfunction getUNIalanceClien() e...\n      JUMPDEST \t\t\tfunction getUNIalanceClien() e...\n      PUSH [tag] 26\t\t\tfunction getUNIalanceClien() e...\n      PUSH [tag] 27\t\t\tfunction getUNIalanceClien() e...\n      JUMP [in]\t\t\tfunction getUNIalanceClien() e...\n    tag 26\t\t\tfunction getUNIalanceClien() e...\n      JUMPDEST \t\t\tfunction getUNIalanceClien() e...\n      PUSH 40\t\t\tfunction getUNIalanceClien() e...\n      MLOAD \t\t\tfunction getUNIalanceClien() e...\n      PUSH [tag] 28\t\t\tfunction getUNIalanceClien() e...\n      SWAP2 \t\t\tfunction getUNIalanceClien() e...\n      SWAP1 \t\t\tfunction getUNIalanceClien() e...\n      PUSH [tag] 25\t\t\tfunction getUNIalanceClien() e...\n      JUMP [in]\t\t\tfunction getUNIalanceClien() e...\n    tag 28\t\t\tfunction getUNIalanceClien() e...\n      JUMPDEST \t\t\tfunction getUNIalanceClien() e...\n      PUSH 40\t\t\tfunction getUNIalanceClien() e...\n      MLOAD \t\t\tfunction getUNIalanceClien() e...\n      DUP1 \t\t\tfunction getUNIalanceClien() e...\n      SWAP2 \t\t\tfunction getUNIalanceClien() e...\n      SUB \t\t\tfunction getUNIalanceClien() e...\n      SWAP1 \t\t\tfunction getUNIalanceClien() e...\n      RETURN \t\t\tfunction getUNIalanceClien() e...\n    tag 6\t\t\tfunction getWETHBalanceClient(...\n      JUMPDEST \t\t\tfunction getWETHBalanceClient(...\n      PUSH [tag] 29\t\t\tfunction getWETHBalanceClient(...\n      PUSH [tag] 30\t\t\tfunction getWETHBalanceClient(...\n      JUMP [in]\t\t\tfunction getWETHBalanceClient(...\n    tag 29\t\t\tfunction getWETHBalanceClient(...\n      JUMPDEST \t\t\tfunction getWETHBalanceClient(...\n      PUSH 40\t\t\tfunction getWETHBalanceClient(...\n      MLOAD \t\t\tfunction getWETHBalanceClient(...\n      PUSH [tag] 31\t\t\tfunction getWETHBalanceClient(...\n      SWAP2 \t\t\tfunction getWETHBalanceClient(...\n      SWAP1 \t\t\tfunction getWETHBalanceClient(...\n      PUSH [tag] 25\t\t\tfunction getWETHBalanceClient(...\n      JUMP [in]\t\t\tfunction getWETHBalanceClient(...\n    tag 31\t\t\tfunction getWETHBalanceClient(...\n      JUMPDEST \t\t\tfunction getWETHBalanceClient(...\n      PUSH 40\t\t\tfunction getWETHBalanceClient(...\n      MLOAD \t\t\tfunction getWETHBalanceClient(...\n      DUP1 \t\t\tfunction getWETHBalanceClient(...\n      SWAP2 \t\t\tfunction getWETHBalanceClient(...\n      SUB \t\t\tfunction getWETHBalanceClient(...\n      SWAP1 \t\t\tfunction getWETHBalanceClient(...\n      RETURN \t\t\tfunction getWETHBalanceClient(...\n    tag 7\t\t\tfunction getDAIBalanceClient()...\n      JUMPDEST \t\t\tfunction getDAIBalanceClient()...\n      PUSH [tag] 32\t\t\tfunction getDAIBalanceClient()...\n      PUSH [tag] 33\t\t\tfunction getDAIBalanceClient()...\n      JUMP [in]\t\t\tfunction getDAIBalanceClient()...\n    tag 32\t\t\tfunction getDAIBalanceClient()...\n      JUMPDEST \t\t\tfunction getDAIBalanceClient()...\n      PUSH 40\t\t\tfunction getDAIBalanceClient()...\n      MLOAD \t\t\tfunction getDAIBalanceClient()...\n      PUSH [tag] 34\t\t\tfunction getDAIBalanceClient()...\n      SWAP2 \t\t\tfunction getDAIBalanceClient()...\n      SWAP1 \t\t\tfunction getDAIBalanceClient()...\n      PUSH [tag] 25\t\t\tfunction getDAIBalanceClient()...\n      JUMP [in]\t\t\tfunction getDAIBalanceClient()...\n    tag 34\t\t\tfunction getDAIBalanceClient()...\n      JUMPDEST \t\t\tfunction getDAIBalanceClient()...\n      PUSH 40\t\t\tfunction getDAIBalanceClient()...\n      MLOAD \t\t\tfunction getDAIBalanceClient()...\n      DUP1 \t\t\tfunction getDAIBalanceClient()...\n      SWAP2 \t\t\tfunction getDAIBalanceClient()...\n      SUB \t\t\tfunction getDAIBalanceClient()...\n      SWAP1 \t\t\tfunction getDAIBalanceClient()...\n      RETURN \t\t\tfunction getDAIBalanceClient()...\n    tag 8\t\t\tIERC20 public wethToken = IERC...\n      JUMPDEST \t\t\tIERC20 public wethToken = IERC...\n      PUSH [tag] 35\t\t\tIERC20 public wethToken = IERC...\n      PUSH [tag] 36\t\t\tIERC20 public wethToken = IERC...\n      JUMP [in]\t\t\tIERC20 public wethToken = IERC...\n    tag 35\t\t\tIERC20 public wethToken = IERC...\n      JUMPDEST \t\t\tIERC20 public wethToken = IERC...\n      PUSH 40\t\t\tIERC20 public wethToken = IERC...\n      MLOAD \t\t\tIERC20 public wethToken = IERC...\n      PUSH [tag] 37\t\t\tIERC20 public wethToken = IERC...\n      SWAP2 \t\t\tIERC20 public wethToken = IERC...\n      SWAP1 \t\t\tIERC20 public wethToken = IERC...\n      PUSH [tag] 38\t\t\tIERC20 public wethToken = IERC...\n      JUMP [in]\t\t\tIERC20 public wethToken = IERC...\n    tag 37\t\t\tIERC20 public wethToken = IERC...\n      JUMPDEST \t\t\tIERC20 public wethToken = IERC...\n      PUSH 40\t\t\tIERC20 public wethToken = IERC...\n      MLOAD \t\t\tIERC20 public wethToken = IERC...\n      DUP1 \t\t\tIERC20 public wethToken = IERC...\n      SWAP2 \t\t\tIERC20 public wethToken = IERC...\n      SUB \t\t\tIERC20 public wethToken = IERC...\n      SWAP1 \t\t\tIERC20 public wethToken = IERC...\n      RETURN \t\t\tIERC20 public wethToken = IERC...\n    tag 9\t\t\taddress public constant UNI = ...\n      JUMPDEST \t\t\taddress public constant UNI = ...\n      PUSH [tag] 39\t\t\taddress public constant UNI = ...\n      PUSH [tag] 40\t\t\taddress public constant UNI = ...\n      JUMP [in]\t\t\taddress public constant UNI = ...\n    tag 39\t\t\taddress public constant UNI = ...\n      JUMPDEST \t\t\taddress public constant UNI = ...\n      PUSH 40\t\t\taddress public constant UNI = ...\n      MLOAD \t\t\taddress public constant UNI = ...\n      PUSH [tag] 41\t\t\taddress public constant UNI = ...\n      SWAP2 \t\t\taddress public constant UNI = ...\n      SWAP1 \t\t\taddress public constant UNI = ...\n      PUSH [tag] 21\t\t\taddress public constant UNI = ...\n      JUMP [in]\t\t\taddress public constant UNI = ...\n    tag 41\t\t\taddress public constant UNI = ...\n      JUMPDEST \t\t\taddress public constant UNI = ...\n      PUSH 40\t\t\taddress public constant UNI = ...\n      MLOAD \t\t\taddress public constant UNI = ...\n      DUP1 \t\t\taddress public constant UNI = ...\n      SWAP2 \t\t\taddress public constant UNI = ...\n      SUB \t\t\taddress public constant UNI = ...\n      SWAP1 \t\t\taddress public constant UNI = ...\n      RETURN \t\t\taddress public constant UNI = ...\n    tag 10\t\t\tIERC20 public linkToken = IERC...\n      JUMPDEST \t\t\tIERC20 public linkToken = IERC...\n      PUSH [tag] 42\t\t\tIERC20 public linkToken = IERC...\n      PUSH [tag] 43\t\t\tIERC20 public linkToken = IERC...\n      JUMP [in]\t\t\tIERC20 public linkToken = IERC...\n    tag 42\t\t\tIERC20 public linkToken = IERC...\n      JUMPDEST \t\t\tIERC20 public linkToken = IERC...\n      PUSH 40\t\t\tIERC20 public linkToken = IERC...\n      MLOAD \t\t\tIERC20 public linkToken = IERC...\n      PUSH [tag] 44\t\t\tIERC20 public linkToken = IERC...\n      SWAP2 \t\t\tIERC20 public linkToken = IERC...\n      SWAP1 \t\t\tIERC20 public linkToken = IERC...\n      PUSH [tag] 38\t\t\tIERC20 public linkToken = IERC...\n      JUMP [in]\t\t\tIERC20 public linkToken = IERC...\n    tag 44\t\t\tIERC20 public linkToken = IERC...\n      JUMPDEST \t\t\tIERC20 public linkToken = IERC...\n      PUSH 40\t\t\tIERC20 public linkToken = IERC...\n      MLOAD \t\t\tIERC20 public linkToken = IERC...\n      DUP1 \t\t\tIERC20 public linkToken = IERC...\n      SWAP2 \t\t\tIERC20 public linkToken = IERC...\n      SUB \t\t\tIERC20 public linkToken = IERC...\n      SWAP1 \t\t\tIERC20 public linkToken = IERC...\n      RETURN \t\t\tIERC20 public linkToken = IERC...\n    tag 11\t\t\tIERC20 public uniToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public uniToken = IERC2...\n      PUSH [tag] 45\t\t\tIERC20 public uniToken = IERC2...\n      PUSH [tag] 46\t\t\tIERC20 public uniToken = IERC2...\n      JUMP [in]\t\t\tIERC20 public uniToken = IERC2...\n    tag 45\t\t\tIERC20 public uniToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public uniToken = IERC2...\n      PUSH 40\t\t\tIERC20 public uniToken = IERC2...\n      MLOAD \t\t\tIERC20 public uniToken = IERC2...\n      PUSH [tag] 47\t\t\tIERC20 public uniToken = IERC2...\n      SWAP2 \t\t\tIERC20 public uniToken = IERC2...\n      SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n      PUSH [tag] 38\t\t\tIERC20 public uniToken = IERC2...\n      JUMP [in]\t\t\tIERC20 public uniToken = IERC2...\n    tag 47\t\t\tIERC20 public uniToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public uniToken = IERC2...\n      PUSH 40\t\t\tIERC20 public uniToken = IERC2...\n      MLOAD \t\t\tIERC20 public uniToken = IERC2...\n      DUP1 \t\t\tIERC20 public uniToken = IERC2...\n      SWAP2 \t\t\tIERC20 public uniToken = IERC2...\n      SUB \t\t\tIERC20 public uniToken = IERC2...\n      SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n      RETURN \t\t\tIERC20 public uniToken = IERC2...\n    tag 12\t\t\taddress public constant WETH =...\n      JUMPDEST \t\t\taddress public constant WETH =...\n      PUSH [tag] 48\t\t\taddress public constant WETH =...\n      PUSH [tag] 49\t\t\taddress public constant WETH =...\n      JUMP [in]\t\t\taddress public constant WETH =...\n    tag 48\t\t\taddress public constant WETH =...\n      JUMPDEST \t\t\taddress public constant WETH =...\n      PUSH 40\t\t\taddress public constant WETH =...\n      MLOAD \t\t\taddress public constant WETH =...\n      PUSH [tag] 50\t\t\taddress public constant WETH =...\n      SWAP2 \t\t\taddress public constant WETH =...\n      SWAP1 \t\t\taddress public constant WETH =...\n      PUSH [tag] 21\t\t\taddress public constant WETH =...\n      JUMP [in]\t\t\taddress public constant WETH =...\n    tag 50\t\t\taddress public constant WETH =...\n      JUMPDEST \t\t\taddress public constant WETH =...\n      PUSH 40\t\t\taddress public constant WETH =...\n      MLOAD \t\t\taddress public constant WETH =...\n      DUP1 \t\t\taddress public constant WETH =...\n      SWAP2 \t\t\taddress public constant WETH =...\n      SUB \t\t\taddress public constant WETH =...\n      SWAP1 \t\t\taddress public constant WETH =...\n      RETURN \t\t\taddress public constant WETH =...\n    tag 13\t\t\tfunction getLINKBalanceClient(...\n      JUMPDEST \t\t\tfunction getLINKBalanceClient(...\n      PUSH [tag] 51\t\t\tfunction getLINKBalanceClient(...\n      PUSH [tag] 52\t\t\tfunction getLINKBalanceClient(...\n      JUMP [in]\t\t\tfunction getLINKBalanceClient(...\n    tag 51\t\t\tfunction getLINKBalanceClient(...\n      JUMPDEST \t\t\tfunction getLINKBalanceClient(...\n      PUSH 40\t\t\tfunction getLINKBalanceClient(...\n      MLOAD \t\t\tfunction getLINKBalanceClient(...\n      PUSH [tag] 53\t\t\tfunction getLINKBalanceClient(...\n      SWAP2 \t\t\tfunction getLINKBalanceClient(...\n      SWAP1 \t\t\tfunction getLINKBalanceClient(...\n      PUSH [tag] 25\t\t\tfunction getLINKBalanceClient(...\n      JUMP [in]\t\t\tfunction getLINKBalanceClient(...\n    tag 53\t\t\tfunction getLINKBalanceClient(...\n      JUMPDEST \t\t\tfunction getLINKBalanceClient(...\n      PUSH 40\t\t\tfunction getLINKBalanceClient(...\n      MLOAD \t\t\tfunction getLINKBalanceClient(...\n      DUP1 \t\t\tfunction getLINKBalanceClient(...\n      SWAP2 \t\t\tfunction getLINKBalanceClient(...\n      SUB \t\t\tfunction getLINKBalanceClient(...\n      SWAP1 \t\t\tfunction getLINKBalanceClient(...\n      RETURN \t\t\tfunction getLINKBalanceClient(...\n    tag 14\t\t\tIERC20 public daiToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public daiToken = IERC2...\n      PUSH [tag] 54\t\t\tIERC20 public daiToken = IERC2...\n      PUSH [tag] 55\t\t\tIERC20 public daiToken = IERC2...\n      JUMP [in]\t\t\tIERC20 public daiToken = IERC2...\n    tag 54\t\t\tIERC20 public daiToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public daiToken = IERC2...\n      PUSH 40\t\t\tIERC20 public daiToken = IERC2...\n      MLOAD \t\t\tIERC20 public daiToken = IERC2...\n      PUSH [tag] 56\t\t\tIERC20 public daiToken = IERC2...\n      SWAP2 \t\t\tIERC20 public daiToken = IERC2...\n      SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n      PUSH [tag] 38\t\t\tIERC20 public daiToken = IERC2...\n      JUMP [in]\t\t\tIERC20 public daiToken = IERC2...\n    tag 56\t\t\tIERC20 public daiToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public daiToken = IERC2...\n      PUSH 40\t\t\tIERC20 public daiToken = IERC2...\n      MLOAD \t\t\tIERC20 public daiToken = IERC2...\n      DUP1 \t\t\tIERC20 public daiToken = IERC2...\n      SWAP2 \t\t\tIERC20 public daiToken = IERC2...\n      SUB \t\t\tIERC20 public daiToken = IERC2...\n      SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n      RETURN \t\t\tIERC20 public daiToken = IERC2...\n    tag 15\t\t\taddress public constant DAI = ...\n      JUMPDEST \t\t\taddress public constant DAI = ...\n      PUSH [tag] 57\t\t\taddress public constant DAI = ...\n      PUSH [tag] 58\t\t\taddress public constant DAI = ...\n      JUMP [in]\t\t\taddress public constant DAI = ...\n    tag 57\t\t\taddress public constant DAI = ...\n      JUMPDEST \t\t\taddress public constant DAI = ...\n      PUSH 40\t\t\taddress public constant DAI = ...\n      MLOAD \t\t\taddress public constant DAI = ...\n      PUSH [tag] 59\t\t\taddress public constant DAI = ...\n      SWAP2 \t\t\taddress public constant DAI = ...\n      SWAP1 \t\t\taddress public constant DAI = ...\n      PUSH [tag] 21\t\t\taddress public constant DAI = ...\n      JUMP [in]\t\t\taddress public constant DAI = ...\n    tag 59\t\t\taddress public constant DAI = ...\n      JUMPDEST \t\t\taddress public constant DAI = ...\n      PUSH 40\t\t\taddress public constant DAI = ...\n      MLOAD \t\t\taddress public constant DAI = ...\n      DUP1 \t\t\taddress public constant DAI = ...\n      SWAP2 \t\t\taddress public constant DAI = ...\n      SUB \t\t\taddress public constant DAI = ...\n      SWAP1 \t\t\taddress public constant DAI = ...\n      RETURN \t\t\taddress public constant DAI = ...\n    tag 19\t\t\taddress public constant LINK =...\n      JUMPDEST \t\t\taddress public constant LINK =...\n      PUSH 326C977E6EFC84E512BB9C30F76E30C160ED06FB\t\t\t0x326C977E6efc84E512bB9C30f76E...\n      DUP2 \t\t\taddress public constant LINK =...\n      JUMP [out]\t\t\taddress public constant LINK =...\n    tag 23\t\t\tfunction getBalanceClient() ex...\n      JUMPDEST \t\t\tfunction getBalanceClient() ex...\n      PUSH 0\t\t\tuint256\n      CALLER \t\t\tmsg.sender\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tmsg.sender.balance\n      AND \t\t\tmsg.sender.balance\n      BALANCE \t\t\tmsg.sender.balance\n      SWAP1 \t\t\treturn msg.sender.balance\n      POP \t\t\treturn msg.sender.balance\n      SWAP1 \t\t\tfunction getBalanceClient() ex...\n      JUMP [out]\t\t\tfunction getBalanceClient() ex...\n    tag 27\t\t\tfunction getUNIalanceClien() e...\n      JUMPDEST \t\t\tfunction getUNIalanceClien() e...\n      PUSH 0\t\t\tuint256\n      PUSH 1F9840A85D5AF5BF1D1762F925BDADDC4201F984\t\t\t0x1f9840a85d5aF5bf1D1762F925BD...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20(UNI).balanceOf\n      AND \t\t\tIERC20(UNI).balanceOf\n      PUSH 70A08231\t\t\tIERC20(UNI).balanceOf\n      CALLER \t\t\tmsg.sender\n      PUSH 40\t\t\tIERC20(UNI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH FFFFFFFF\t\t\tIERC20(UNI).balanceOf(msg.send...\n      AND \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH E0\t\t\tIERC20(UNI).balanceOf(msg.send...\n      SHL \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      MSTORE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 4\t\t\tIERC20(UNI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 62\t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP2 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 63\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMP [in]\t\t\tIERC20(UNI).balanceOf(msg.send...\n    tag 62\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 20\t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(UNI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP4 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      SUB \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP7 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      EXTCODESIZE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 64\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPI \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      REVERT \t\t\tIERC20(UNI).balanceOf(msg.send...\n    tag 64\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      GAS \t\t\tIERC20(UNI).balanceOf(msg.send...\n      STATICCALL \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 66\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPI \t\t\tIERC20(UNI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      RETURNDATACOPY \t\t\tIERC20(UNI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(UNI).balanceOf(msg.send...\n      REVERT \t\t\tIERC20(UNI).balanceOf(msg.send...\n    tag 66\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(UNI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 1F\t\t\tIERC20(UNI).balanceOf(msg.send...\n      NOT \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 1F\t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      AND \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(UNI).balanceOf(msg.send...\n      MSTORE \t\t\tIERC20(UNI).balanceOf(msg.send...\n      POP \t\t\tIERC20(UNI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 67\t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP2 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(UNI).balanceOf(msg.send...\n      PUSH [tag] 68\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMP [in]\t\t\tIERC20(UNI).balanceOf(msg.send...\n    tag 67\t\t\tIERC20(UNI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(UNI).balanceOf(msg.send...\n      SWAP1 \t\t\treturn IERC20(UNI).balanceOf(m...\n      POP \t\t\treturn IERC20(UNI).balanceOf(m...\n      SWAP1 \t\t\tfunction getUNIalanceClien() e...\n      JUMP [out]\t\t\tfunction getUNIalanceClien() e...\n    tag 30\t\t\tfunction getWETHBalanceClient(...\n      JUMPDEST \t\t\tfunction getWETHBalanceClient(...\n      PUSH 0\t\t\tuint256\n      PUSH B4FBF271143F4FBF7B91A5DED31805E42B2208D6\t\t\t0xB4FBF271143F4FBf7B91A5ded318...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20(WETH).balanceOf\n      AND \t\t\tIERC20(WETH).balanceOf\n      PUSH 70A08231\t\t\tIERC20(WETH).balanceOf\n      CALLER \t\t\tmsg.sender\n      PUSH 40\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH FFFFFFFF\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      AND \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH E0\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SHL \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      MSTORE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 4\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 70\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP2 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 63\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMP [in]\t\t\tIERC20(WETH).balanceOf(msg.sen...\n    tag 70\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 20\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP4 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SUB \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP7 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      EXTCODESIZE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 71\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPI \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      REVERT \t\t\tIERC20(WETH).balanceOf(msg.sen...\n    tag 71\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      GAS \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      STATICCALL \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 73\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPI \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      RETURNDATACOPY \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      REVERT \t\t\tIERC20(WETH).balanceOf(msg.sen...\n    tag 73\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 1F\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      NOT \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 1F\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      AND \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      MSTORE \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      POP \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 74\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP2 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      PUSH [tag] 68\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMP [in]\t\t\tIERC20(WETH).balanceOf(msg.sen...\n    tag 74\t\t\tIERC20(WETH).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(WETH).balanceOf(msg.sen...\n      SWAP1 \t\t\treturn IERC20(WETH).balanceOf(...\n      POP \t\t\treturn IERC20(WETH).balanceOf(...\n      SWAP1 \t\t\tfunction getWETHBalanceClient(...\n      JUMP [out]\t\t\tfunction getWETHBalanceClient(...\n    tag 33\t\t\tfunction getDAIBalanceClient()...\n      JUMPDEST \t\t\tfunction getDAIBalanceClient()...\n      PUSH 0\t\t\tuint256\n      PUSH 11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844\t\t\t0x11fE4B6AE13d2a6055C8D9cF65c5...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20(DAI).balanceOf\n      AND \t\t\tIERC20(DAI).balanceOf\n      PUSH 70A08231\t\t\tIERC20(DAI).balanceOf\n      CALLER \t\t\tmsg.sender\n      PUSH 40\t\t\tIERC20(DAI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH FFFFFFFF\t\t\tIERC20(DAI).balanceOf(msg.send...\n      AND \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH E0\t\t\tIERC20(DAI).balanceOf(msg.send...\n      SHL \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      MSTORE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 4\t\t\tIERC20(DAI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 76\t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP2 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 63\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMP [in]\t\t\tIERC20(DAI).balanceOf(msg.send...\n    tag 76\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 20\t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(DAI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP4 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      SUB \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP7 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      EXTCODESIZE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 77\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPI \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      REVERT \t\t\tIERC20(DAI).balanceOf(msg.send...\n    tag 77\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      GAS \t\t\tIERC20(DAI).balanceOf(msg.send...\n      STATICCALL \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ISZERO \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 79\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPI \t\t\tIERC20(DAI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      RETURNDATACOPY \t\t\tIERC20(DAI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 0\t\t\tIERC20(DAI).balanceOf(msg.send...\n      REVERT \t\t\tIERC20(DAI).balanceOf(msg.send...\n    tag 79\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(DAI).balanceOf(msg.send...\n      MLOAD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      RETURNDATASIZE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 1F\t\t\tIERC20(DAI).balanceOf(msg.send...\n      NOT \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 1F\t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      AND \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP3 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH 40\t\t\tIERC20(DAI).balanceOf(msg.send...\n      MSTORE \t\t\tIERC20(DAI).balanceOf(msg.send...\n      POP \t\t\tIERC20(DAI).balanceOf(msg.send...\n      DUP2 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      ADD \t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 80\t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP2 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP1 \t\t\tIERC20(DAI).balanceOf(msg.send...\n      PUSH [tag] 68\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMP [in]\t\t\tIERC20(DAI).balanceOf(msg.send...\n    tag 80\t\t\tIERC20(DAI).balanceOf(msg.send...\n      JUMPDEST \t\t\tIERC20(DAI).balanceOf(msg.send...\n      SWAP1 \t\t\treturn IERC20(DAI).balanceOf(m...\n      POP \t\t\treturn IERC20(DAI).balanceOf(m...\n      SWAP1 \t\t\tfunction getDAIBalanceClient()...\n      JUMP [out]\t\t\tfunction getDAIBalanceClient()...\n    tag 36\t\t\tIERC20 public wethToken = IERC...\n      JUMPDEST \t\t\tIERC20 public wethToken = IERC...\n      PUSH 0\t\t\tIERC20 public wethToken = IERC...\n      DUP1 \t\t\tIERC20 public wethToken = IERC...\n      SLOAD \t\t\tIERC20 public wethToken = IERC...\n      SWAP1 \t\t\tIERC20 public wethToken = IERC...\n      PUSH 100\t\t\tIERC20 public wethToken = IERC...\n      EXP \t\t\tIERC20 public wethToken = IERC...\n      SWAP1 \t\t\tIERC20 public wethToken = IERC...\n      DIV \t\t\tIERC20 public wethToken = IERC...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public wethToken = IERC...\n      AND \t\t\tIERC20 public wethToken = IERC...\n      DUP2 \t\t\tIERC20 public wethToken = IERC...\n      JUMP [out]\t\t\tIERC20 public wethToken = IERC...\n    tag 40\t\t\taddress public constant UNI = ...\n      JUMPDEST \t\t\taddress public constant UNI = ...\n      PUSH 1F9840A85D5AF5BF1D1762F925BDADDC4201F984\t\t\t0x1f9840a85d5aF5bf1D1762F925BD...\n      DUP2 \t\t\taddress public constant UNI = ...\n      JUMP [out]\t\t\taddress public constant UNI = ...\n    tag 43\t\t\tIERC20 public linkToken = IERC...\n      JUMPDEST \t\t\tIERC20 public linkToken = IERC...\n      PUSH 1\t\t\tIERC20 public linkToken = IERC...\n      PUSH 0\t\t\tIERC20 public linkToken = IERC...\n      SWAP1 \t\t\tIERC20 public linkToken = IERC...\n      SLOAD \t\t\tIERC20 public linkToken = IERC...\n      SWAP1 \t\t\tIERC20 public linkToken = IERC...\n      PUSH 100\t\t\tIERC20 public linkToken = IERC...\n      EXP \t\t\tIERC20 public linkToken = IERC...\n      SWAP1 \t\t\tIERC20 public linkToken = IERC...\n      DIV \t\t\tIERC20 public linkToken = IERC...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public linkToken = IERC...\n      AND \t\t\tIERC20 public linkToken = IERC...\n      DUP2 \t\t\tIERC20 public linkToken = IERC...\n      JUMP [out]\t\t\tIERC20 public linkToken = IERC...\n    tag 46\t\t\tIERC20 public uniToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public uniToken = IERC2...\n      PUSH 2\t\t\tIERC20 public uniToken = IERC2...\n      PUSH 0\t\t\tIERC20 public uniToken = IERC2...\n      SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n      SLOAD \t\t\tIERC20 public uniToken = IERC2...\n      SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n      PUSH 100\t\t\tIERC20 public uniToken = IERC2...\n      EXP \t\t\tIERC20 public uniToken = IERC2...\n      SWAP1 \t\t\tIERC20 public uniToken = IERC2...\n      DIV \t\t\tIERC20 public uniToken = IERC2...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public uniToken = IERC2...\n      AND \t\t\tIERC20 public uniToken = IERC2...\n      DUP2 \t\t\tIERC20 public uniToken = IERC2...\n      JUMP [out]\t\t\tIERC20 public uniToken = IERC2...\n    tag 49\t\t\taddress public constant WETH =...\n      JUMPDEST \t\t\taddress public constant WETH =...\n      PUSH B4FBF271143F4FBF7B91A5DED31805E42B2208D6\t\t\t0xB4FBF271143F4FBf7B91A5ded318...\n      DUP2 \t\t\taddress public constant WETH =...\n      JUMP [out]\t\t\taddress public constant WETH =...\n    tag 52\t\t\tfunction getLINKBalanceClient(...\n      JUMPDEST \t\t\tfunction getLINKBalanceClient(...\n      PUSH 0\t\t\tuint256\n      PUSH 326C977E6EFC84E512BB9C30F76E30C160ED06FB\t\t\t0x326C977E6efc84E512bB9C30f76E...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20(LINK).balanceOf\n      AND \t\t\tIERC20(LINK).balanceOf\n      PUSH 70A08231\t\t\tIERC20(LINK).balanceOf\n      CALLER \t\t\tmsg.sender\n      PUSH 40\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH FFFFFFFF\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      AND \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH E0\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SHL \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      MSTORE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 4\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 82\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP2 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 63\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMP [in]\t\t\tIERC20(LINK).balanceOf(msg.sen...\n    tag 82\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 20\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP4 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SUB \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP7 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      EXTCODESIZE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 83\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPI \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      REVERT \t\t\tIERC20(LINK).balanceOf(msg.sen...\n    tag 83\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      GAS \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      STATICCALL \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ISZERO \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 85\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPI \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      RETURNDATACOPY \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 0\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      REVERT \t\t\tIERC20(LINK).balanceOf(msg.sen...\n    tag 85\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      MLOAD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      RETURNDATASIZE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 1F\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      NOT \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 1F\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      AND \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP3 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH 40\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      MSTORE \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      POP \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      DUP2 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      ADD \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 86\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP2 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP1 \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      PUSH [tag] 68\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMP [in]\t\t\tIERC20(LINK).balanceOf(msg.sen...\n    tag 86\t\t\tIERC20(LINK).balanceOf(msg.sen...\n      JUMPDEST \t\t\tIERC20(LINK).balanceOf(msg.sen...\n      SWAP1 \t\t\treturn IERC20(LINK).balanceOf(...\n      POP \t\t\treturn IERC20(LINK).balanceOf(...\n      SWAP1 \t\t\tfunction getLINKBalanceClient(...\n      JUMP [out]\t\t\tfunction getLINKBalanceClient(...\n    tag 55\t\t\tIERC20 public daiToken = IERC2...\n      JUMPDEST \t\t\tIERC20 public daiToken = IERC2...\n      PUSH 3\t\t\tIERC20 public daiToken = IERC2...\n      PUSH 0\t\t\tIERC20 public daiToken = IERC2...\n      SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n      SLOAD \t\t\tIERC20 public daiToken = IERC2...\n      SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n      PUSH 100\t\t\tIERC20 public daiToken = IERC2...\n      EXP \t\t\tIERC20 public daiToken = IERC2...\n      SWAP1 \t\t\tIERC20 public daiToken = IERC2...\n      DIV \t\t\tIERC20 public daiToken = IERC2...\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\tIERC20 public daiToken = IERC2...\n      AND \t\t\tIERC20 public daiToken = IERC2...\n      DUP2 \t\t\tIERC20 public daiToken = IERC2...\n      JUMP [out]\t\t\tIERC20 public daiToken = IERC2...\n    tag 58\t\t\taddress public constant DAI = ...\n      JUMPDEST \t\t\taddress public constant DAI = ...\n      PUSH 11FE4B6AE13D2A6055C8D9CF65C55BAC32B5D844\t\t\t0x11fE4B6AE13d2a6055C8D9cF65c5...\n      DUP2 \t\t\taddress public constant DAI = ...\n      JUMP [out]\t\t\taddress public constant DAI = ...\n    tag 88\t\t\t-License-Identifier: GPL-2.0-o...\n      JUMPDEST \t\t\t-License-Identifier: GPL-2.0-o...\n      PUSH 0\t\t\t-License-Identifier: GPL-2.0-o...\n      DUP2 \t\t\tmport \n      MLOAD \t\t\t;\\r\\n\\r\\nimport \"\n      SWAP1 \t\t\ticoder v2;\\r\\n\\r\\nimport \"\n      POP \t\t\ticoder v2;\\r\\n\\r\\nimport \"\n      PUSH [tag] 90\t\t\tithub.com/Uniswap/v3-periphery...\n      DUP2 \t\t\tery/b\n      PUSH [tag] 91\t\t\tithub.com/Uniswap/v3-periphery...\n      JUMP [in]\t\t\tithub.com/Uniswap/v3-periphery...\n    tag 90\t\t\tithub.com/Uniswap/v3-periphery...\n      JUMPDEST \t\t\tithub.com/Uniswap/v3-periphery...\n      SWAP3 \t\t\t\\npragma abicoder v2;\\r\\n\\r\\ni...\n      SWAP2 \t\t\t\\npragma abicoder v2;\\r\\n\\r\\ni...\n      POP \t\t\t\\npragma abicoder v2;\\r\\n\\r\\ni...\n      POP \t\t\t\\npragma abicoder v2;\\r\\n\\r\\ni...\n      JUMP [out]\t\t\t\\npragma abicoder v2;\\r\\n\\r\\ni...\n    tag 68\t\t\tracts/interfaces/ISwapRouter.s...\n      JUMPDEST \t\t\tracts/interfaces/ISwapRouter.s...\n      PUSH 0\t\t\tracts/interfaces/ISwapRouter.s...\n      PUSH 20\t\t\t (\n      DUP3 \t\t\tview retu\n      DUP5 \t\t\texterna\n      SUB \t\t\tnt) external view retur\n      SLT \t\t\tccount) external view returns ...\n      ISZERO \t\t\ts \n      PUSH [tag] 93\t\t\ts \n      JUMPI \t\t\ts \n      PUSH 0\t\t\t \n      DUP1 \t\t\t\\r\n      REVERT \t\t\t256);\\r\\n\\r\\n   \n    tag 93\t\t\ts \n      JUMPDEST \t\t\ts \n      PUSH 0\t\t\t6\n      PUSH [tag] 94\t\t\ts (bool);\\r\\n}\\r\\ncontract Get...\n      DUP5 \t\t\tc const\n      DUP3 \t\t\tess pu\n      DUP6 \t\t\t\\n\\r\\n    ad\n      ADD \t\t\te {\\r\\n\\r\\n    address pub\n      PUSH [tag] 88\t\t\ts (bool);\\r\\n}\\r\\ncontract Get...\n      JUMP [in]\t\t\ts (bool);\\r\\n}\\r\\ncontract Get...\n    tag 94\t\t\ts (bool);\\r\\n}\\r\\ncontract Get...\n      JUMPDEST \t\t\ts (bool);\\r\\n}\\r\\ncontract Get...\n      SWAP2 \t\t\tnal returns (bool);\\r\\n}\\r\\nco...\n      POP \t\t\tnal returns (bool);\\r\\n}\\r\\nco...\n      POP \t\t\tprove(address spender, uint256...\n      SWAP3 \t\t\teOf(address account) external ...\n      SWAP2 \t\t\teOf(address account) external ...\n      POP \t\t\teOf(address account) external ...\n      POP \t\t\teOf(address account) external ...\n      JUMP [out]\t\t\teOf(address account) external ...\n    tag 95\t\t\tc84E512bB9C30f76E30c160eD06FB;...\n      JUMPDEST \t\t\tc84E512bB9C30f76E30c160eD06FB;...\n      PUSH [tag] 97\t\t\t1805e42b2208d6;\\r\\n    address...\n      DUP2 \t\t\tstant\n      PUSH [tag] 98\t\t\t1805e42b2208d6;\\r\\n    address...\n      JUMP [in]\t\t\t1805e42b2208d6;\\r\\n    address...\n    tag 97\t\t\t1805e42b2208d6;\\r\\n    address...\n      JUMPDEST \t\t\t1805e42b2208d6;\\r\\n    address...\n      DUP3 \t\t\t5de\n      MSTORE \t\t\tBf7B91A5ded31805e42b2208d6;\\r\\...\n      POP \t\t\tF271143F4FBf7B91A5ded31805e42b...\n      POP \t\t\tF271143F4FBf7B91A5ded31805e42b...\n      JUMP [out]\t\t\tF271143F4FBf7B91A5ded31805e42b...\n    tag 99\t\t\t0a85d5aF5bf1D1762F925BDADdC420...\n      JUMPDEST \t\t\t0a85d5aF5bf1D1762F925BDADdC420...\n      PUSH [tag] 101\t\t\ta6055C8D9cF65c55bac32B5d\n      DUP2 \t\t\tc32B5\n      PUSH [tag] 102\t\t\ta6055C8D9cF65c55bac32B5d\n      JUMP [in]\t\t\ta6055C8D9cF65c55bac32B5d\n    tag 101\t\t\ta6055C8D9cF65c55bac32B5d\n      JUMPDEST \t\t\ta6055C8D9cF65c55bac32B5d\n      DUP3 \t\t\tE13\n      MSTORE \t\t\t1fE4B6AE13d2a6055C8D9cF65c55ba...\n      POP \t\t\t DAI = 0x11fE4B6AE13d2a6055C8D...\n      POP \t\t\t DAI = 0x11fE4B6AE13d2a6055C8D...\n      JUMP [out]\t\t\t DAI = 0x11fE4B6AE13d2a6055C8D...\n    tag 103\t\t\t IERC20 public wethToken = IER...\n      JUMPDEST \t\t\t IERC20 public wethToken = IER...\n      PUSH [tag] 105\t\t\tblic uniToken = IERC20(UNI);\\r...\n      DUP2 \t\t\tlic d\n      PUSH [tag] 106\t\t\tblic uniToken = IERC20(UNI);\\r...\n      JUMP [in]\t\t\tblic uniToken = IERC20(UNI);\\r...\n    tag 105\t\t\tblic uniToken = IERC20(UNI);\\r...\n      JUMPDEST \t\t\tblic uniToken = IERC20(UNI);\\r...\n      DUP3 \t\t\t20 \n      MSTORE \t\t\t   IERC20 public uniToken = IE...\n      POP \t\t\t(LINK);\\r\\n    IERC20 public u...\n      POP \t\t\t(LINK);\\r\\n    IERC20 public u...\n      JUMP [out]\t\t\t(LINK);\\r\\n    IERC20 public u...\n    tag 107\t\t\t20(DAI);\\r\\n\\r\\n    function g...\n      JUMPDEST \t\t\t20(DAI);\\r\\n\\r\\n    function g...\n      PUSH [tag] 109\t\t\t        return IERC20(WE\n      DUP2 \t\t\tC20(W\n      PUSH [tag] 110\t\t\t        return IERC20(WE\n      JUMP [in]\t\t\t        return IERC20(WE\n    tag 109\t\t\t        return IERC20(WE\n      JUMPDEST \t\t\t        return IERC20(WE\n      DUP3 \t\t\t\\n  \n      MSTORE \t\t\t256) {\\r\\n            return I...\n      POP \t\t\turns (uint256) {\\r\\n          ...\n      POP \t\t\turns (uint256) {\\r\\n          ...\n      JUMP [out]\t\t\turns (uint256) {\\r\\n          ...\n    tag 21\t\t\t(msg.sender);\\r\\n        }\\r\\n...\n      JUMPDEST \t\t\t(msg.sender);\\r\\n        }\\r\\n...\n      PUSH 0\t\t\t(msg.sender);\\r\\n        }\\r\\n...\n      PUSH 20\t\t\tla\n      DUP3 \t\t\t20(LINK).\n      ADD \t\t\tIERC20(LINK).balan\n      SWAP1 \t\t\t return IERC20(LINK).balan\n      POP \t\t\t return IERC20(LINK).balan\n      PUSH [tag] 112\t\t\tender);\\r\\n        }\\r\\n    fu...\n      PUSH 0\t\t\te\n      DUP4 \t\t\trnal view\n      ADD \t\t\texternal view ret\n      DUP5 \t\t\teClien\n      PUSH [tag] 99\t\t\tender);\\r\\n        }\\r\\n    fu...\n      JUMP [in]\t\t\tender);\\r\\n        }\\r\\n    fu...\n    tag 112\t\t\tender);\\r\\n        }\\r\\n    fu...\n      JUMPDEST \t\t\tender);\\r\\n        }\\r\\n    fu...\n      SWAP3 \t\t\t           return IERC20(LINK)...\n      SWAP2 \t\t\t           return IERC20(LINK)...\n      POP \t\t\t           return IERC20(LINK)...\n      POP \t\t\t           return IERC20(LINK)...\n      JUMP [out]\t\t\t           return IERC20(LINK)...\n    tag 63\t\t\t {\\r\\n            return IERC2...\n      JUMPDEST \t\t\t {\\r\\n            return IERC2...\n      PUSH 0\t\t\t {\\r\\n            return IERC2...\n      PUSH 20\t\t\t\\n \n      DUP3 \t\t\tuint256) \n      ADD \t\t\tns (uint256) {\\r\\n  \n      SWAP1 \t\t\tew returns (uint256) {\\r\\n  \n      POP \t\t\tew returns (uint256) {\\r\\n  \n      PUSH [tag] 114\t\t\treturn IERC20(DAI).balanceOf(m...\n      PUSH 0\t\t\te\n      DUP4 \t\t\tn getBala\n      ADD \t\t\tction getBalanceC\n      DUP5 \t\t\t\\r\\n    \n      PUSH [tag] 95\t\t\treturn IERC20(DAI).balanceOf(m...\n      JUMP [in]\t\t\treturn IERC20(DAI).balanceOf(m...\n    tag 114\t\t\treturn IERC20(DAI).balanceOf(m...\n      JUMPDEST \t\t\treturn IERC20(DAI).balanceOf(m...\n      SWAP3 \t\t\txternal view returns (uint256)...\n      SWAP2 \t\t\txternal view returns (uint256)...\n      POP \t\t\txternal view returns (uint256)...\n      POP \t\t\txternal view returns (uint256)...\n      JUMP [out]\t\t\txternal view returns (uint256)...\n    tag 38\t\t\tal view returns (uint256){\\r\\n...\n      JUMPDEST \t\t\tal view returns (uint256){\\r\\n...\n      PUSH 0\t\t\tal view returns (uint256){\\r\\n...\n      PUSH 20\t\t\t\n      DUP3 \t\t\t\n      ADD \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      PUSH [tag] 116\t\t\t\n      PUSH 0\t\t\t\n      DUP4 \t\t\t\n      ADD \t\t\t\n      DUP5 \t\t\t\n      PUSH [tag] 103\t\t\t\n      JUMP [in]\t\t\t\n    tag 116\t\t\t\n      JUMPDEST \t\t\t\n      SWAP3 \t\t\t\n      SWAP2 \t\t\t\n      POP \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 25\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH 20\t\t\t\n      DUP3 \t\t\t\n      ADD \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      PUSH [tag] 118\t\t\t\n      PUSH 0\t\t\t\n      DUP4 \t\t\t\n      ADD \t\t\t\n      DUP5 \t\t\t\n      PUSH [tag] 107\t\t\t\n      JUMP [in]\t\t\t\n    tag 118\t\t\t\n      JUMPDEST \t\t\t\n      SWAP3 \t\t\t\n      SWAP2 \t\t\t\n      POP \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 102\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 120\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 121\t\t\t\n      JUMP [in]\t\t\t\n    tag 120\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 121\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\t\t\t\n      DUP3 \t\t\t\n      AND \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 110\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      DUP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 98\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 125\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 126\t\t\t\n      JUMP [in]\t\t\t\n    tag 125\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 106\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 128\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 129\t\t\t\n      JUMP [in]\t\t\t\n    tag 128\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 129\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 131\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 121\t\t\t\n      JUMP [in]\t\t\t\n    tag 131\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 126\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 133\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 134\t\t\t\n      JUMP [in]\t\t\t\n    tag 133\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 134\t\t\t\n      JUMPDEST \t\t\t\n      PUSH 0\t\t\t\n      PUSH [tag] 136\t\t\t\n      DUP3 \t\t\t\n      PUSH [tag] 121\t\t\t\n      JUMP [in]\t\t\t\n    tag 136\t\t\t\n      JUMPDEST \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      SWAP2 \t\t\t\n      SWAP1 \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    tag 91\t\t\t\n      JUMPDEST \t\t\t\n      PUSH [tag] 138\t\t\t\n      DUP2 \t\t\t\n      PUSH [tag] 110\t\t\t\n      JUMP [in]\t\t\t\n    tag 138\t\t\t\n      JUMPDEST \t\t\t\n      DUP2 \t\t\t\n      EQ \t\t\t\n      PUSH [tag] 139\t\t\t\n      JUMPI \t\t\t\n      PUSH 0\t\t\t\n      DUP1 \t\t\t\n      REVERT \t\t\t\n    tag 139\t\t\t\n      JUMPDEST \t\t\t\n      POP \t\t\t\n      JUMP [out]\t\t\t\n    .data\n"
+}
