@@ -32,17 +32,20 @@ const swapExactInputSingle = async (amountIn) => {
   try {
     setIsLoading(true);
 
+    const parsedAmount = ethers.utils.parseEther(amountIn);
+
+
     const swapContract = createEthereumContract();
     
     const tx = await swapContract.swapExactInputSingle(
-      amountIn,
+      parsedAmount,
       linkAddress,
       wethAddress
     );
     const receipt = await tx.wait();
     
     const event = receipt.events.find(e => e.event === "Transfer");
-    const amountOut = event.args.value;
+    const amountOut = ethers.utils.formatEther(event.args.value);
 
     console.log('Swap successful!');
 
@@ -58,9 +61,9 @@ const swapExactInputSingle = async (amountIn) => {
 const sendOutputBack = async (amount) => {
   try {
     setIsLoading(true);
-
+    const parsedAmount = ethers.utils.parseEther(amount);
     const swapContract = createEthereumContract();
-    return await swapContract.sendOutputBack(amount, wethAddress);
+    return await swapContract.sendOutputBack(parsedAmount, wethAddress);
   } catch (error) {
     console.error('Error during sending output back:', error.message);
     throw error;
@@ -72,9 +75,9 @@ const sendOutputBack = async (amount) => {
 const approveLink = async (amount) => {
   try {
     setIsLoading(true);
-
+    const parsedAmount = ethers.utils.parseEther(amount);
     const swapContract = createEthereumContract();
-    return await swapContract.approveLink(amount);
+    return await swapContract.approveLink(parsedAmount);
   } catch (error) {
     console.error('Error during approving Link:', error.message);
     throw error;
@@ -86,9 +89,10 @@ const approveLink = async (amount) => {
 const sendLinkIn = async (amount) => {
   try {
     setIsLoading(true);
+    const parsedAmount = ethers.utils.parseEther(amount);
 
     const swapContract = createEthereumContract();
-    return await swapContract.sendLinkIn(amount);
+    return await swapContract.sendLinkIn(parsedAmount);
   } catch (error) {
     console.error('Error during sending Link in:', error.message);
     throw error;

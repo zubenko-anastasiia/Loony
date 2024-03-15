@@ -143,8 +143,11 @@ const disconnectWallet = async () => {
         const balanceContract = createEthereumBalanceContract();
         const initialWETHBalance = await balanceContract.getWETHBalanceClient();
         const initialLINKBalance = await balanceContract.getLINKBalanceClient();
-        setWETHBalance(initialWETHBalance.toString());
-        setLinkBalance(initialLINKBalance.toString());
+        const amountOutWeth = ethers.utils.formatEther(initialWETHBalance);
+        const amountOutLink = ethers.utils.formatEther(initialLINKBalance);
+
+        setWETHBalance(amountOutWeth.toString());
+        setLinkBalance(amountOutLink.toString());
       }
     } catch (error) {
       console.error('Error fetching balances:', error.message);
